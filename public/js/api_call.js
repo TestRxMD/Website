@@ -1,56 +1,28 @@
 $(document).ready(function () {
-  const base_url = "http://localhost:7000";
-  // const base_url = "https://www.testrxmd.com"
-  // const base_url = "https://rxmdsite-production.up.railway.app";
+  // const base_url = "http://localhost:7000";
+  const base_url = "https://website-production-9e49.up.railway.app"
   const new_url = window?.location?.search;
   console.log(new_url)
   if (new_url.includes('checkout')) {
     localStorage.setItem("toCheckout", "true");
-  }  
+  }
+  const check_url = window?.location?.href;
+  if (check_url == `${base_url}/` && localStorage.getItem("toCheckout") === "true"
+    && localStorage.getItem("redirectLogin") === "true") {
+    localStorage.removeItem("toCheckout")
+    localStorage.removeItem("redirectLogin")
+    location.href = "/checkout"
+  }
   $("#populate").on("click", function () {
     loadTable();
   });
   $("#populate-order").on("click", function () {
     loadOrderTable();
   });
-
-  const showJotForm= localStorage.getItem("showJotForm")
-if(showJotForm=== "true")
-{
-  localStorage.removeItem("showJotForm")
-  let $ajaxload_popup = $(".ajaxload-popup");
-        if ($ajaxload_popup.length > 0) {
-          $ajaxload_popup.magnificPopup({
-            items: [
-              {
-                src: $ajaxload_popup.prop('href'),
-                type: "iframe", 
-              },
-            ],
-            mainClass: "registrationForm",
-            alignTop: true,
-            overflowY: "scroll", 
-          }).magnificPopup('open'); 
-        }
-}
-
   $.ajax({
     url: `${base_url}/checkauth`,
     method: "GET",
     success: function (data) {
-      console.log(data)
-      const check_url = window?.location?.href;
-      if (check_url == `${base_url}/` && localStorage.getItem("toCheckout") === "true") {
-        localStorage.removeItem("toCheckout")
-        location.href = "/checkout"
-      }
-      if(localStorage.getItem("showJotFormCheckout")=== "true"){
-        localStorage.removeItem("showJotFormCheckout")
-        localStorage.setItem("showJotForm", "true");
-        location.href = "/checkout"
-      }
-      data?.user?.affiliateLink&&
-        localStorage.setItem("isAffiliate", "true");
       data?.user?.role?.toLowerCase() !== "admin" &&
         localStorage.setItem("isAdmin", "false");
       data?.user?.role?.toLowerCase() === "admin" &&
@@ -68,15 +40,10 @@ if(showJotForm=== "true")
   const checkLogin = () => {
     const isLoged = localStorage.getItem("isLoged");
     const isAdmin = localStorage.getItem("isAdmin");
-    const isAffiliate=localStorage.getItem("isAffiliate")
     isLoged === "true" && $("#login_link").addClass("d-none");
     isLoged === "true" && $("#logout_link").removeClass("d-none");
     isLoged !== "true" && $("#login_link").removeClass("d-none");
     isLoged !== "true" && $("#logout_link").addClass("d-none");
-    isLoged === "true" && isAffiliate!=="true" && $("#voltage_btn_title").text("Start Now");
-    isLoged !== "true" && $("#voltage_btn_link").attr("href","/register?to=affiliate");
-    isLoged === "true" && isAffiliate==="true" && $("#voltage_btn_title").text("My Link");
-    
     (isAdmin !== "true" || isLoged !== "true") &&
       $("#admin_link").addClass("d-none");
     isLoged === "true" &&
@@ -88,10 +55,6 @@ if(showJotForm=== "true")
   //register api call
   $("#register_user").on("click", function (event) {
     event.preventDefault();
-    console.log(window?.location?.href)
-    const urlParams = new URLSearchParams(window.location.search);
-    const affiliatedBy = urlParams.get('affiliatedBy');
-    const url=affiliatedBy?`${base_url}/register?affiliatedBy=${affiliatedBy}`:`${base_url}/register`
     $("#register_error").addClass("d-none");
     const first_name = $("#first_name").val();
     const last_name = $("#last_name").val();
@@ -137,12 +100,14 @@ if(showJotForm=== "true")
       contentType: 'application/json',
       data: JSON.stringify({ login_email, login_password, rememberme }),
       success: function (data) {
-        if(!data.intakeFilled)localStorage.setItem("showJotFormCheckout", "true");
         localStorage.setItem("isLoged", "true");
         data?.info?.role?.role?.toLowerCase() !== "admin" &&
           localStorage.setItem("isAdmin", "false");
         data?.info?.role?.role?.toLowerCase() === "admin" &&
           localStorage.setItem("isAdmin", "true");
+        if (localStorage.getItem("toCheckout") === "true") {
+          localStorage.setItem("redirectLogin", "true");
+        }
         location.href = '/';
       },
       error: function (data) {
@@ -286,18 +251,8 @@ if(showJotForm=== "true")
     });
 
   });
-  //use new_payment
-  $('#otherPaymentCheckbox').change(function() {
-    if ($(this).is(':checked')) {
-      $('#use_new_payment').removeClass('d-none')
-    } else {
-      $('#use_new_payment').addClass('d-none')
-    }
-  });
-  
-  
 
-function ValidateEmail(email) {
+  function ValidateEmail(email) {
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (email?.match(mailformat)) {
       return true;
@@ -323,7 +278,17 @@ function ValidateEmail(email) {
       "This account is deactivated, please contact our customer service"
     );
   }
-  
+  $('input[id="telehealth-appt-checkbox"]').on("click", function () {
+    let total_price = 0;
+    $("#telehealth-appt-checkbox:checked")
+      .parent("td")
+      .siblings("#product-price")
+      .each(function () {
+        let product_price = Number($(this).children("span").text());
+        total_price = total_price + product_price;
+      });
+    $("#cart-total-price").text(total_price);
+  });
 
   $("#product-select").on("change", function () {
     const id = this.value;
@@ -826,7 +791,9 @@ function ValidateEmail(email) {
         });
       },
       error: (error) => {
-      
+        alert(
+          "Error retrieving users from database, please tell Jacob this isn't working!"
+        );
       },
     });
   };
@@ -838,38 +805,6 @@ function ValidateEmail(email) {
     }
     return null;
   }
-const loadUserPaymentMethod=()=>{
-  $.ajax({
-    url: `${base_url}/getmypaymentmethod`,
-    method: "GET",
-    success: function (data) {
-    if(data.length>0){
-      $("#payment_card_list").empty()
-      $("#check_exist_payment").removeClass('d-none')
-      $('#otherPaymentCheckbox').prop('checked', false);
-      $("#use_new_payment").addClass('d-none')
-      data?.forEach(payment => {
-        $("#payment_card_list").append(`
-        <div id="each_card">
-        <input type="radio" class="card_selector" id=${payment.id} name="card" value=${payment.userProfilePaymentId}>
-        <label for=${payment.id}>Card Number: ${payment.cardLastDigit}</label>
-        </div>
-        `)
-      })
-    }
-    $('.card_selector').first().prop('checked', true);
-
-    $('.card_selector').on('change', function() {
-      var selectedValue = $('input[name="card"]:checked').val();
-      console.log(selectedValue);
-    });
-    },
-    error: (error) => {
-      console.log(error)
-    },
-  })
-}
-loadUserPaymentMethod()
 
   //copmlete order
   $('#complete-order').on('click', function (event) {
@@ -928,17 +863,12 @@ loadUserPaymentMethod()
       city: $("#checkout-form-city").val(),
       state: $('#checkout-form-state').val(),
       zip: $("#checkout-form-zip").val(),
-      customer_payment_profile_id: $('input[type="radio"].card_selector:checked').val(),
-      use_exist_payment: !($("#otherPaymentCheckbox").is(':checked')),
-      save_payment_info: $("#saveCardCheckbox").is(':checked')
-    } 
-    const apply_discount=$("#applyDiscountCheckbox").is(':checked')
+    }
     //here make ajax call to compelete the order
     $.ajax({
       url: `${base_url}/addorder`,
       method: "POST",
-      contentType: 'application/json',
-      data: JSON.stringify({  payment_detail, product_ordered,apply_discount }),
+      data: { payment_detail, product_ordered },
       success: function (data) {
         $('#spinner-div').hide();
         $('input[id="telehealth-appt-checkbox"]').prop('checked', false);
@@ -976,300 +906,6 @@ loadUserPaymentMethod()
       },
     });
   })
-//change password
-$('#success_toast_page .close').on('click', function() {
-  $(this).closest('#success_toast_page').removeClass('show');
-});
-$('#change_password_btn').on('click',function(event){
-  event.preventDefault();
-  $("#change_password_text_spin").removeClass("d-none");
-  $("#change_password_text").addClass("d-none");
-
-  $('#change_password_error').addClass('d-none')
-  const old_password=$('#account_form_old_password').val()
-  const new_password= $('#account_form_new_password').val()
-  const confirm_password=$('#account_form_confirm_password').val()
-  if(!old_password||!new_password||!confirm_password){ 
-    $("#change_password_text_spin").addClass("d-none");
-    $("#change_password_text").removeClass("d-none");   
-    $('#change_password_error').text("please fill all field").removeClass('d-none')
-    return
-  }
-  if(new_password!=confirm_password){
-    $("#change_password_text_spin").addClass("d-none");
-    $("#change_password_text").removeClass("d-none");
-    $('#change_password_error').text("new password must match").removeClass('d-none')
-    return 
-  }
-$.ajax({
-  url: `${base_url}/changemypassword`,
-  method: "PUT",
-  contentType: 'application/json',
-  data: JSON.stringify({ old_password,new_password,confirm_password }),
-  success: function (data) {
-    $('#account_form_old_password').val('')
-    $('#account_form_new_password').val('')
-    $('#account_form_confirm_password').val('')
-
-    $("#change_password_text_spin").addClass("d-none");
-    $("#change_password_text").removeClass("d-none");
-
-    $("#success_toast_title").text("password changed")
-    $('#success_toast_page').addClass('show');
-    setTimeout(function() {
-      $('#success_toast_page').removeClass('show');
-    }, 5000);
-
-  },
-  error: function (data) {
-    $("#change_password_text_spin").addClass("d-none");
-    $("#change_password_text").removeClass("d-none");
-    $('#change_password_error').text(data.responseJSON.message).removeClass('d-none')
-  },
-});
-});
-let is_payable_exist=false
-let payable_amount=0
-function getAffiliateTotalAmount(){
-  console.log("in aff amount")
-  is_payable_exist=false
-  $.ajax({
-    url: `${base_url}/affiliate/amount`,
-    method: "GET",
-    contentType: 'application/json',
-    success: function (data) {
-      if((Number(data?.amount))>0){
-        payable_amount=Number(data?.amount)  
-      }
-      Number(data?.amount)<=0?$("#apply_discount_p").addClass("d-none"):
-      $("#apply_discount_p").removeClass("d-none")
-      let cash_payable=0
-      if(data?.amount&&data?.amount>20){
-        $('#get_code_btn').prop('disabled', false);
-        is_payable_exist=true  
-      }
-      //show 70% for cashout
-      cash_payable=data?.amount*0.7
-      $('#total_paid_amount').text(`Total Payable Amount= $${cash_payable}`)
-    },
-    error: function (data) {
-      console.log("in aff error")
-      $('#total_paid_amount').text(`Total Payable Amount= $0/E`)
-    },
-  });
-  
-}
-$('[data-toggle="tooltip"]').tooltip()
-//get_paid
-$('#get_paid_check').change(function() {
-  if ($(this).is(':checked')&&is_payable_exist) {
-    $('#get_paid_part').removeClass('d-none')
-  } else {
-    $('#get_paid_part').addClass('d-none')
-  }
-});
-
-$('input[id="telehealth-appt-checkbox"]').on("click", function () {
-  let total_price = 0;
-  $("#telehealth-appt-checkbox:checked")
-    .parent("td")
-    .siblings("#product-price")
-    .each(function () {
-      let product_price = Number($(this).children("span").text());
-      total_price = total_price + product_price;
-    });
-    const apply_discount=$("#applyDiscountCheckbox").is(':checked')
-    if(apply_discount){
-      //you will atleast pay 10% of it
-    if((total_price*0.9)<Number(payable_amount)){
-      const discountedPrice=Number(total_price)*0.1
-      $("#cart-total-price").text(discountedPrice);
-    }
-    else{
-      const discountedPrice=Number(total_price)-Number(payable_amount)
-      $("#cart-total-price").text(discountedPrice);
-    }
-  }
-else{
-  $("#cart-total-price").text(total_price);
-}
-});
-
-//apply discount
-$('#applyDiscountCheckbox').change(function() {
-  if ($(this).is(':checked')) {
-    let total_price = 0;
-      $("#telehealth-appt-checkbox:checked")
-      .parent("td")
-      .siblings("#product-price")
-      .each(function () {
-        let product_price = Number($(this).children("span").text());
-        total_price = total_price + product_price;
-      });
-      console.log((total_price*0.9),Number(payable_amount))
-      if((total_price*0.9)<Number(payable_amount)){
-        const discountedPrice=Number(total_price)*0.1
-        $("#cart-total-price").text(discountedPrice);
-      }
-      else{
-        const discountedPrice=Number(total_price)-Number(payable_amount)
-        $("#cart-total-price").text(discountedPrice);
-      }
-  } else {
-    let total_price = 0;
-      $("#telehealth-appt-checkbox:checked")
-      .parent("td")
-      .siblings("#product-price")
-      .each(function () {
-        let product_price = Number($(this).children("span").text());
-        total_price = total_price + product_price;
-      });
-      $("#cart-total-price").text(total_price);
-  }
-});
-
-function getQrCode(){
-  $.ajax({
-    url: `${base_url}/affiliatecode`,
-    method: "GET",
-    success: function (data) {
-      $('#generateQR').addClass('d-none')
-      $('#copy_url_div').removeClass('d-none')
-      $('#QRcode_image').attr('src', data.src);
-      $('#qr_url_input').val(data.url)
-    },
-  });
-}
-function getOtp(){
-  $('#get_paid_error').addClass('d-none')
-  $.ajax({
-    url: `${base_url}/otp`,
-    method: "GET",
-    success: function (data) {
-      $('#get_code_btn').prop('disabled',true)
-      $("#success_toast_title").text("otp sent to your email")
-      $('#success_toast_page').addClass('show');
-    setTimeout(function() {
-      $('#success_toast_page').removeClass('show');
-    }, 5000);
-    setTimeout(()=>{
-      $('#get_code_btn').prop('disabled',false)
-    },60000)
-    $("#get_code_text_spin").addClass("d-none");
-    $("#get_code_text").removeClass("d-none");
-    },
-    error:function(error){
-      $('#get_code_btn').prop('disabled',false)
-      $("#get_code_text_spin").addClass("d-none");
-      $("#get_code_text").removeClass("d-none");
-      $('#get_paid_error').removeClass('d-none').text(err.responseJSON.message)
-
-    }
-  });
- 
-}
-
-$('#get_code_btn').on("click",async()=>{
-  $("#get_code_text_spin").removeClass("d-none");
-  $("#get_code_text").addClass("d-none");
-  getOtp()
-
-})
-$('#otp_code_input').on('input', function() {
-  if ($(this).val().length > 4) {
-    $('#confirm_otp_btn').prop('disabled', false);
-  }
-  else{
-    $('#confirm_otp_btn').prop('disabled', true);
-  }
-});
-const loadAffiliateTable = () => {
-  $("#affiliate_table_body").empty();
-  $.ajax({
-    url: `${base_url}/affiliate/detail`,
-    type: "GET",
-    success: ({affilate_detail}) => {
-      console.log(affilate_detail)
-      affilate_detail?.forEach((affilate) => {
-        $("#affiliate_table_body").append(`
-      <tr>
-        <td>${affilate?.buyer?.first_name + ' ' + affilate?.buyer?.last_name || ""}</td>
-        <td>${new Date(affilate?.createdAt).toLocaleDateString()}</td>
-        <td>$${affilate?.amount}</td>
-        <td>${affilate?.status}</td>
-      </tr>`);
-      });
-    },
-    error: (error) => {
-    
-    },
-  });
-};
-function confirmOtp(){
-  const otp=$('#otp_code_input').val()
-  $('#get_paid_error').addClass('d-none')
-  if(otp){
-  $.ajax({
-    url: `${base_url}/otp`,
-    method: "POST",
-    data:{otp},
-    success: function (data) {
-     $("#success_toast_title").text("payment is pending, we will notify you with email as soon as it succeed")
-     $('#success_toast_page').addClass('show');
-   setTimeout(function() {
-     $('#success_toast_page').removeClass('show');
-   }, 5000);
-   $("#confirm_code_text_spin").addClass("d-none");
-   $("#confirm_code_text").removeClass("d-none");
-   $('#get_paid_part').addClass('d-none')
-   console.log('reload table and amount')
-   getAffiliateTotalAmount()
-   loadAffiliateTable()
-    },
-    error:function(err){
-      console.log("in confirm error",err.responseJSON.message)
-      $("#confirm_code_text_spin").addClass("d-none");
-      $("#confirm_code_text").removeClass("d-none");
-      $('#get_paid_error').removeClass('d-none').text(err.responseJSON.message)
-    }
-  });
- }
-}
-
-$('#confirm_otp_btn').on("click",()=>{
-  $("#confirm_code_text_spin").removeClass("d-none");
-  $("#confirm_code_text").addClass("d-none");
-  confirmOtp()
-})
-
-
-
-//get affiliate
-$('#generateQR').on('click',function(event){
-getQrCode()
-});
-if(window?.location?.href==`${base_url}/affiliate` && 
-localStorage.getItem("isAffiliate")==="true"){
-getQrCode()
-}
-if(window?.location?.href==`${base_url}/account` && 
-localStorage.getItem("isAffiliate")==="true"){
-  loadAffiliateTable()
-  getAffiliateTotalAmount()
-}
-if(window?.location?.href==`${base_url}/checkout` && 
-localStorage.getItem("isAffiliate")==="true"){
-  getAffiliateTotalAmount()
-}
-console.log("pamount"+payable_amount)
-// if(localStorage.getItem("isAffiliate")!=="true"||payable_amount==0){
-//   $("#apply_discount_p").addClass("d-none")
-// }
-$('#copy_url_btn').click(function() {
-      const url=$('#qr_url_input').val()
-      navigator.clipboard.writeText(url)
-});
-
   $(document).on("click", ".procced-to-checkout", function () {
     location.href = '/appt'
   })
