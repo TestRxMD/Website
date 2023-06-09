@@ -7,6 +7,36 @@
 body {
   margin: 0;
 }
+
+#payment_card_list {
+  display: flex;
+}
+#each_card{
+  margin: 5px 20px;
+  padding: 15px 30px;
+  border: solid 3px #7d7676;
+  border-radius: 5px;
+  
+}
+
+#copy_url_btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#copy_url_btn:hover {
+  background-color: #3e8e41;
+}
+
+#url_input {
+  position: absolute;
+  left: -9999px;
+}
+
 #jotform-hover:hover{
 cursor: pointer;
 color:#1e1ecf
@@ -359,11 +389,22 @@ color:red
   overflow:scroll; 
   max-height:400px;
 }
+#table-medicaction-info
+{
+  overflow:scroll; 
+  max-height:1000px;
+}
 td ul {
   width: 100%;
   display: inline-block;
 }
 .table-users th{
+  font-size: 12px;
+}
+#medicaction_info_title th{
+  font-size: 15px;
+}
+#medicaction_info_body td{
   font-size: 12px;
 }
 #user-table-body td,#order-table-body td{

@@ -4,7 +4,9 @@ const sharp = require("sharp");
 const fs = require("fs");
 const path = require("path");
 const User = require("../models/userModel");
+const PaymenInfo=require("../models/paymentInfoModel")
 const { removeEmptyPair } = require("../helper/reusable");
+const { getUser, getTreatmentType, getProductType, appointmentUnpaidExist } = require("../helper/user");
 exports.addProduct = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -56,15 +58,18 @@ exports.getProduct = async (req, res, next) => {
       order: [["product_name", "ASC"]],
     };
     const id = req.user.sub;
-    const user = await User.findByPk(id);
+    const unpaid_appt_exist=await appointmentUnpaidExist(id)
+    if(unpaid_appt_exist){
+      return res.redirect('/appointment')
+    }
+    const paymentInfo=await PaymenInfo.findAll({where:{userId:id}})
+    const user = await getUser(id);
     let products;
     if(user.appointment){
-      products = await Product.findAll({
-        ...options,where:{type:'treatment'}});
+      products = await getTreatmentType(options)
     }
     else{
-      products = await Product.findAll({
-        ...options,where:{type:'product'}});
+      products = await getProductType(options)
     }
     const priceArr = [];
     products?.map((e) => priceArr.push(Number(e.price)));
@@ -83,7 +88,7 @@ exports.getProduct = async (req, res, next) => {
     }
     return res.render(
       path.join(__dirname, "..", "/views/pages/shop-checkout"),
-      { products,billing_info,token }
+      { products,billing_info,token,paymentInfo}
     );
   } catch (err) {
     next(err);

@@ -11,13 +11,14 @@ const authenticateJWT = async (req, res, next) => {
     if (!token) {
       handleError("please login", 403);
     }
-    const user = await asyncVerify(token, process.env.SECRET)
+    const user = await asyncVerify(token, process.env.ACCESS_TOKEN_SECRET)
     if (user?.sub) {
       const check_user = await User.findByPk(user?.sub)
       if (!check_user?.isActive) {
         handleError("This account is inactive, please contact our customer service", 403);
       }
       req.user = user;
+      console.log(user)
       next();
       return
     }

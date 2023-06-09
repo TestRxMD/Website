@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+
+  <!-- Meta Tags -->
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="description" content="TestRxMD" />
+  <meta name="keywords"
+    content="testrxmd, clinic, testosterone, hormone, therapy, ed, erectile dysfunction, supplements, doctor, medical, energy, shop, medication, indiana, columbus, neiters" />
+  <meta name="author" content="Jacob Briggs" />
+  <!-- Page Title -->
+  <title>TestRxMD</title>
+
+  <!-- Favicon and Touch Icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+  <link rel="manifest" href="images/site.webmanifest">
+
+  <!-- Stylesheet -->
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="css/animate.min.css" rel="stylesheet" type="text/css">
+  <link href="css/javascript-plugins-bundle.css" rel="stylesheet" />
+
+
+  <!-- CSS | menuzord megamenu skins -->
+  <link href="js/menuzord/css/menuzord.css" rel="stylesheet" />
+  <link href="css/tooltip.css" rel="stylesheet" />
+
+  <!-- CSS | Main style file -->
+  <link href="css/style-main.css" rel="stylesheet" type="text/css">
+  <link id="menuzord-menu-skins" href="css/menuzord-skins/menuzord-rounded-boxed.css" rel="stylesheet" />
+
+  <!-- CSS | Responsive media queries -->
+  <link href="css/responsive.css" rel="stylesheet" type="text/css">
+
+  <!-- CSS | Theme Color -->
+  <link href="css/colors/theme-colors.css" rel="stylesheet" type="text/css">
+
+  <!-- External javascripts -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/javascript-plugins-bundle.min.js"></script>
+  <script src="js/menuzord/js/menuzord.js"></script>
+
+  <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body class="tm-container-1300px has-side-panel side-panel-right">
+  <%- include('../partials/headerTop.ejs') %>
+    <li class="menu-item">
+      <a href="/">Home</a>
+    </li>
+    <li class="menu-item">
+      <a href="/services">Services</a>
+    </li>
+    <li class="menu-item">
+      <a href="#">About</a>
+    </li>
+    <li class="menu-item">
+      <a href="/contact">Contact</a>
+    </li>
+    <li class="menu-item">
+      <a href="/checkout">Telehealth &amp; Labs</a>
+    </li>
+    <li class="active menu-item">
+      <a href="/account">Account</a>
+    </li>
+    <li class="menu-item">
+      <a class="d-none" href="/dashboard" id="admin_link">Admin Dashboard</a>
+    </li>
+    <li class="menu-item">
+      <a href="/login" id="login_link">Sign In</a>
+      <a href="#" id="logout_link" class="d-none">Sign out</a>
+    </li>
+
+    <%- include('../partials/headerBottom.ejs') %>
+
+      <!-- Section: page title -->
+            <section data-tm-bg-img="images/pattern/p8.png" class="section-typo-dark">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 offset-md-3 mb-40">
+              <h2 class="text-gray mt-0 pt-10">This is your account page</h2>
+              <hr>
+              <p>You can change your password, see your past or upcoming appointments, see your past or current
+                therapies, checkout your affiliate data if you are an affiliate, and much more</p>
+              <form name="account-change-password-form" class="clearfix">
+                <h3 class="text-center mt-5">Change Your Password</h3>
+                <div id="change_password_error" class="alert alert-danger d-none text-center" role="alert"></div>
+                <div class="row">
+                  <div class="mb-3 col-md-12">
+                    <label for="account_form_old_password">Old Password</label>
+                    <input id="account_form_old_password" name="account_form_old_password" class="form-control"
+                      type="password">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="mb-3 col-md-12">
+                    <label for="account_form_new_password">New Password</label>
+                    <input id="account_form_new_password" name="account_form_new_password" class="form-control"
+                      type="password">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="mb-3 col-md-12">
+                    <label for="account_form_confirm_password">Confirm New Password</label>
+                    <input id="account_form_confirm_password" name="account_form_confirm_password" class="form-control"
+                      type="password">
+                  </div>
+                </div>
+                <div class="mb-3 tm-sc-button mt-10">
+                  <button id="change_password_btn" type="submit" class="btn btn-dark">
+                    <span id="change_password_text">Submit</span>
+                    <span id="change_password_text_spin" class="d-none">
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      Loading...
+                    </span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+      <hr>
+      <!-- Modal -->
+      <%- include('../partials/toast') %>
+        <!-- Appointments -->
+        <!-- <div data-tm-bg-img="images/pattern/p8.png">
+          <div class="container">
+            <div class="row">
+              <div class="mb-40">
+                <h1 class="text-center mt-5 text-black">Appointments</h1>
+                <table id="appts_table" class="account-table bg-silver-light">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th>Provider</th>
+                      <th>Appt Link</th>
+                      <th>payment Status</th>
+                      <th>Appt Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="appts_table_body">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr> -->
+
+        <!-- Therapies -->
+        <!-- <div data-tm-bg-img="images/pattern/p8.png">
+          <div class="container">
+            <div class="row">
+              <div class="mb-40">
+                <h1 class="text-center mt-5 text-black">Current Therapies</h1>
+                <table id="therapies_table" class="account-table bg-silver-light">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Dosage</th>
+                      <th>Start Date</th>
+                      <th>Refills</th>
+                    </tr>
+                  </thead>
+                  <tbody id="appts_table_body">
+                    <tr>
+                      <td>Drug Name</td>
+                      <td>Dosage</td>
+                      <td>This is a date</td>
+                      <td>Refills Left #</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div> 
+        <hr> -->
+
+      <!-- Affiliate -->
+      <div id="affiliate_table" data-tm-bg-img="images/pattern/p8.png">
+        <div class="container">
+          <div class="row">
+            <div class="mb-40">
+              <h1 class="text-center mt-5 text-black">Affiliate Info</h1>
+              <table id="affiliate_table_data" class="account-table bg-silver-light">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <!-- <th>Long-Term Therapy Product</th> -->
+                    <th>Affiliate Comission Amount</th>
+                    <th>status</th>
+                  </tr>
+                </thead>
+                <tbody id="affiliate_table_body">
+                  <!-- need db call to user table, pull all appts, starting with most recent appts you will have to create a <tr> with the details like below. I think we only put the link in the table for upcoming appts and past apps do not have a link - maybe we just put "complete" in that space instead of a zoom link. You can target this table body with the id #appts_table_body and append a new row for each one. -->
+                 
+                </tbody>
+                
+              </table>
+              <span flow="right" tooltip="You can only get 70% of your discount, if you would like to get in cash (minimum cash-out is $20)">
+                <i class="fas fa-question-circle" ></i> </span> <span id="total_paid_amount">Total Payable Amount= $0</span>
+              
+                <!-- <div>
+              <div id="get_paid_con" class="d-none">
+              <label for="get_paid_check" class="btn p-0 mb-2">
+               Get Paid</label>
+                <input id="get_paid_check" maxlength="8" type="checkbox"/>
+              </div>
+                <div id="get_paid_part" class="d-none">
+              <div class="input-group mb-3 mt-3 col-md-4">
+                <input id="otp_code_input" style="max-width:300px;" type="text" class="form-control">
+                <span class="input-group-btn">
+                  <button id="get_code_btn" class="btn btn-info" disabled type="submit">
+                    <span id="get_code_text">Get Code</span>
+                    <span id="get_code_text_spin" class="d-none">
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      Loading...
+                    </span>
+                      
+                  </button>  
+
+                </span>
+              </div>
+              <div class="col-md-4">
+              <button id="confirm_otp_btn" class="btn btn-warning" disabled>
+                <span id="confirm_code_text">Confirm Code</span>
+                    <span id="confirm_code_text_spin" class="d-none">
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      Loading...
+                    </span>
+              </button>
+              <span id="get_paid_error" class="alert alert-danger d-none text-center p-2 mr-5" style="font-size: 13px;" role="alert"></span>
+            </div>
+            </div>
+          </div> -->
+           
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+        <!-- end main-content -->
+        <%- include('../partials/footer') %>
+
+          <!-- Footer Scripts -->
+          <script src="js/custom.js"></script>
+          <script src="js/api_call.js"></script>
+       

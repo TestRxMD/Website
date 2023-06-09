@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
-const { issueToken } = require("../helper/user");
+const moment = require('moment');
+const { issueToken} = require("../helper/user");
 const { Op } = require("sequelize");
 const passportGoogle = require("passport-google-oauth20");
 const GoogleStrategy = passportGoogle.Strategy;
@@ -10,7 +11,7 @@ exports.googlePassport = (passport) => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL,
+        callbackURL: `${process.env.BASE_URL}/auth/google/callback`,
       },
       async function (accessToken, refreshToken, profile, done) {
         try {
@@ -52,19 +53,24 @@ exports.issueGoogleToken = async (req, res, next) => {
         "/login?error=" + encodeURIComponent("Google-Auth-Not-Exist")
       );
     }
-    const token = await issueToken(
+    const access_token = await issueToken(
       req?.user[0]?.id,
       req?.user[0]?.role?.role,
       req?.user[0]?.email,
-      process.env.SECRET
+      false,
+      process.env.ACCESS_TOKEN_SECRET,
+      process.env.ACCESS_TOKEN_EXPIRES
     );
-    return res
-      .cookie("access_token", token, {
+      const currentDate = new Date();
+      const cookie_expires = moment(currentDate).add(process.env.ACCESS_TOKEN_EXPIRES.match(/^(\d+)/)[1],'days').toDate();
+      await res.cookie("access_token", access_token, {
         path: "/",
         httpOnly:true,
-        secure: true,
+        expires:new Date(cookie_expires),
+        // secure: true,
       })
-      .redirect("/");
+      if(req?.user[0]?.intake) return res.redirect("/")
+      return res.redirect("/?intakeFilled=" + encodeURIComponent("false"));
   } catch (err) {
     next(err);
   }

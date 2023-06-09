@@ -3611,17 +3611,17 @@ header#header .nav-side-icon-list>li:last-child {
 
 #top-primary-nav .menuzord-menu>li>a,
 #top-primary-nav-clone .menuzord-menu>li>a {
-  font-size: 1rem;
-  padding-left: 20px;
-  padding-right: 20px;
+  font-size: .9rem;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 @media (max-width: 1199.98px) {
 
   #top-primary-nav .menuzord-menu>li>a,
   #top-primary-nav-clone .menuzord-menu>li>a {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 }
 
@@ -32104,4 +32104,49 @@ $grid-breakpoints: (
   h3 {
     font-size: 2.0rem;
   }
+}
+
+.account-table {
+  border-spacing: 0;
+  border-collapse: separate;
+  border-radius: 10px;
+  border: 1px solid black;
+  box-shadow: 10px 8px 8px grey;
+}
+
+.account-table th:not(:last-child),
+.account-table td:not(:last-child) {
+  border-right: 1px solid black;
+}
+
+.account-table th,
+.account-table>tbody>tr:not(:last-child)>th,
+.account-table>tbody>tr:not(:last-child)>td,
+.account-table>tfoot>tr:not(:last-child)>th,
+.account-table>tfoot>tr:not(:last-child)>td,
+.account-table>tr:not(:last-child)>td,
+.account-table>tr:not(:last-child)>th,
+.account-table>tbody:not(:last-child),
+.account-table>tfoot:not(:last-child) {
+  border-bottom: 1px solid black;
+}
+
+.checkbox-lg {
+  top: .8rem;
+  scale: 1.4;
+  margin-right: 0.0rem;
+}
+
+.checkbox-lg .check-label {
+  padding-top: 13px;
+}
+
+.checkbox-xl {
+  top: 1.2rem;
+  scale: 1.7;
+  margin-right: 2.1rem;
+}
+
+.checkbox-xl .check-label {
+  padding-top: 19px;
 }

@@ -25,7 +25,14 @@ const {
   contactFormEmail,
   adminDashboard,
   getUserByStatus,
-  updateUserState
+  updateUserState,
+  getAffilateCode,
+  getOtp,
+  confirmOtp,
+  getUserAffiliateDetail,
+  getAvailableProvider,
+  getProviderSchedule,
+  getUserAffiliateRelation
 } = require("../controllers/userController");
 // const {appointmentCreatedWebhook}=require("../controllers/appointment.controller")
 const { errorHandler } = require("../middleware/errohandling.middleware");
@@ -39,8 +46,11 @@ router.post("/register", registerValidate(), registerUser, errorHandler);
 router.post("/login", loginValidate(), bouncer.block, loginUser, errorHandler);
 router.put("/updateuser/:id", authenticateJWT, updateUserInfo, errorHandler);
 router.put("/updateuserstate/:id", authenticateJWT, updateUserState, errorHandler);
-router.put("/changemypassword/", authenticateJWT, passwordChangeValidate(), changePassword, errorHandler);
+router.put("/changemypassword/", authenticateJWT,bouncer.block, passwordChangeValidate(), changePassword, errorHandler);
 router.get("/confirm", confirmEmail, errorHandler);
+router.get("/otp",authenticateJWT, getOtp, errorHandler);
+// router.post("/otp",authenticateJWT, confirmOtp, errorHandler);
+router.get("/affiliate/detail",authenticateJWT, getUserAffiliateDetail, errorHandler);
 router.post("/forgotpassword", forgotPassword, errorHandler);
 router.post("/resetpassword", resetPassword, errorHandler);
 router.get("/getusers", authenticateJWT, authAdmin, getUsers, errorHandler);
@@ -49,6 +59,10 @@ router.get("/getuserbystate", authenticateJWT, authAdmin, getUserByStatus, error
 router.get("/getloggeduser", authenticateJWT, getCurrentLoggedUser, errorHandler);
 router.get("/checkauth", checkAuth, errorHandler);
 router.get("/logout", logOut, errorHandler);
+router.get("/affiliatecode", authenticateJWT,getAffilateCode, errorHandler);
+router.get("/affiliaterelation", getUserAffiliateRelation, errorHandler);
+router.get("/provider/available",authenticateJWT, getAvailableProvider, errorHandler);
+router.get("/provider/schedule/:providerId", getProviderSchedule, errorHandler);
 router.post("/contactform", contactFormValidate(), contactFormEmail, errorHandler);
 router.post("/jotformwebhook", multipart.array(), jotformWebhook, errorHandler);
 // router.post("/vcitawebhook", appointmentCreatedWebhook, errorHandler);
@@ -65,7 +79,7 @@ router.get("/auth/google",
 router.use("/auth/google/callback",
   passport.authenticate("google", {
     session: false,
-    failureRedirect: process.env.FAIL_REDIRECT,
+    failureRedirect: `${process.env.BASE_URL}/login`,
   }),
   issueGoogleToken,
   errorHandler

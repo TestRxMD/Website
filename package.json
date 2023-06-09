@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "dependencies": {
     "authorizenet": "^1.0.8",
+    "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.8",
     "cookie-parser": "^1.4.6",
@@ -16,23 +17,35 @@
     "express-validator": "^6.14.2",
     "google-auth-library": "^8.7.0",
     "googleapis": "^109.0.1",
+    "helmet": "^7.0.0",
     "jsdom": "^20.0.3",
     "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^2.3.3",
+    "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.0",
     "nodemon": "^2.0.20",
+    "openai": "^3.2.1",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7",
+    "paypal-rest-sdk": "^1.8.1",
+    "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.1",
     "sequelize": "^6.26.0",
     "sequelize-cli": "^6.5.2",
-    "sharp": "^0.31.2"
+    "sharp": "^0.31.2",
+    "speakeasy": "^2.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "start:dev": "nodemon src/index.js",
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:migrate:undo": "npx sequelize-cli db:migrate:undo"
   },
   "repository": {
     "type": "git",
