@@ -70,7 +70,7 @@ app.use(product_route);
 app.use(chat_route);
 app.use(order_product_route);
 app.use(order_route);
-app.use(payment_info_route);
+// app.use(payment_info_route);
 // app.use(patient_info);
 app.use(view_route);
 
