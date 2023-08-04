@@ -4,11 +4,11 @@ const Order = require("./orderModel");
 const User = require("./userModel");
 const Role = require("./roleModel");
 const Affliate = require("./affiliateModel");
-const Subscription=require("./subscriptionModel")
-const PaymenInfo=require("./paymentInfoModel")
-const Tracking=require("./trackingModel")
-const Patientinfo=require("./patientInfoModel")
-const Appointment=require("./appointmentModel")
+const Subscription = require("./subscriptionModel")
+const PaymenInfo = require("./paymentInfoModel")
+const Tracking = require("./trackingModel")
+// const Patientinfo = require("./patientInfoModel")
+// const Appointment = require("./appointmentModel")
 
 const Relation = () => {
   //product to order
@@ -20,88 +20,88 @@ const Relation = () => {
     through: "ProductOrder",
     foreignKey: "productId",
   });
-//new.......
- // user-user
-  User.hasMany(User,{
+  //new.......
+  // user-user
+  User.hasMany(User, {
     foreignKey: 'affiliatedBy',
-    as:'affiliate'
+    as: 'affiliate'
   })
-  User.belongsTo(User,{
+  User.belongsTo(User, {
     foreignKey: 'affiliatedBy',
-    as:"affiliator"
+    as: "affiliator"
   });
 
-   // user as buyer-affiliate
-   User.hasMany(Affliate,{
+  // user as buyer-affiliate
+  User.hasMany(Affliate, {
     foreignKey: 'buyerId',
     as: 'buyer'
   })
-  Affliate.belongsTo(User,{
+  Affliate.belongsTo(User, {
     foreignKey: 'buyerId',
     as: 'buyer'
   })
-   // user as buyer-affiliate
-   User.hasMany(Appointment,{
-    foreignKey: 'userId',
-  })
-  Appointment.belongsTo(User,{
-    foreignKey: 'userId',
-  })
-   // user as buyer-affiliate
-   User.hasMany(Patientinfo,{
-    foreignKey: 'userId',
-  })
-  Patientinfo.belongsTo(User,{
-    foreignKey: 'userId',
-  })
-   // product-patientinfo
-   Product.hasMany(Patientinfo,{
-    foreignKey: 'productId'
-  })
-  Patientinfo.belongsTo(Product,{
-    foreignKey: 'productId'
-    })
+  // user as buyer-affiliate
+  //  User.hasMany(Appointment,{
+  //   foreignKey: 'userId',
+  // })
+  // Appointment.belongsTo(User,{
+  //   foreignKey: 'userId',
+  // })
+  // user as buyer-affiliate
+  //  User.hasMany(Patientinfo,{
+  //   foreignKey: 'userId',
+  // })
+  // Patientinfo.belongsTo(User,{
+  //   foreignKey: 'userId',
+  // })
+  // product-patientinfo
+  //  Product.hasMany(Patientinfo,{
+  //   foreignKey: 'productId'
+  // })
+  // Patientinfo.belongsTo(Product,{
+  //   foreignKey: 'productId'
+  //   })
   // user as affliator-affiliate
-  User.hasMany(Affliate,{
+  User.hasMany(Affliate, {
     foreignKey: 'affilatorId',
     as: 'affilator'
   })
-  Affliate.belongsTo(User,{
+  Affliate.belongsTo(User, {
     foreignKey: 'affilatorId',
     as: 'affilator'
   })
 
   // order-affiliate
-  Order.hasOne(Affliate,{
+  Order.hasOne(Affliate, {
     foreignKey: 'orderId'
   })
-  Affliate.belongsTo(Order,{
+  Affliate.belongsTo(Order, {
     foreignKey: 'orderId'
   })
   // user-paymentinfo
-  User.hasMany(PaymenInfo,{
+  User.hasMany(PaymenInfo, {
     foreignKey: 'userId'
   })
-  PaymenInfo.belongsTo(User,{
+  PaymenInfo.belongsTo(User, {
     foreignKey: 'userId'
   })
   // user-subscription
-  User.hasMany(Subscription,{
+  User.hasMany(Subscription, {
     foreignKey: 'userId'
   })
-  Subscription.belongsTo(User,{
+  Subscription.belongsTo(User, {
     foreignKey: 'userId'
   })
-   // user-product
-   Product.hasOne(Subscription,{
+  // user-product
+  Product.hasOne(Subscription, {
     foreignKey: 'productId'
   })
-  Subscription.belongsTo(Product,{
+  Subscription.belongsTo(Product, {
     foreignKey: 'productId'
   })
 
 
-//new.......
+  //new.......
   //orderproduct to order
   Order.hasMany(Orderproduct, {
     foreignKey: "orderId",
@@ -124,12 +124,12 @@ const Relation = () => {
   Tracking.belongsTo(Order, {
     foreignKey: "orderId",
   });
-   //role to user
+  //role to user
   Role.hasMany(User, {
     foreignKey: "roleId",
   });
   User.belongsTo(Role, {
     foreignKey: "roleId",
   });
- };
+};
 module.exports = Relation;
