@@ -10,7 +10,7 @@ const Subscription = sequelize.define("subscriptions", {
   },
   userSubscriptionId: {
     type: Sequelize.STRING,
-    defaultValue:false
+    defaultValue: false
   },
 });
 
