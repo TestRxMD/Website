@@ -6,7 +6,6 @@ const path = require("path");
 const User = require("../models/userModel");
 const PaymenInfo=require("../models/paymentInfoModel")
 const { removeEmptyPair } = require("../helper/reusable");
-const { getUser, getTreatmentType, getProductType, appointmentUnpaidExist } = require("../helper/user");
 exports.addProduct = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -58,18 +57,16 @@ exports.getProduct = async (req, res, next) => {
       order: [["product_name", "ASC"]],
     };
     const id = req.user.sub;
-    const unpaid_appt_exist=await appointmentUnpaidExist(id)
-    if(unpaid_appt_exist){
-      return res.redirect('/appointment')
-    }
     const paymentInfo=await PaymenInfo.findAll({where:{userId:id}})
-    const user = await getUser(id);
+    const user = await User.findByPk(id);
     let products;
     if(user.appointment){
-      products = await getTreatmentType(options)
+      products = await Product.findAll({
+        ...options,where:{type:'treatment'}});
     }
     else{
-      products = await getProductType(options)
+      products = await Product.findAll({
+        ...options,where:{type:'product'}});
     }
     const priceArr = [];
     products?.map((e) => priceArr.push(Number(e.price)));
@@ -86,6 +83,7 @@ exports.getProduct = async (req, res, next) => {
       zipCode:user.zip_code,
       state:user.state
     }
+    console.log(paymentInfo)
     return res.render(
       path.join(__dirname, "..", "/views/pages/shop-checkout"),
       { products,billing_info,token,paymentInfo}

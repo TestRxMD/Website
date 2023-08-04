@@ -63,77 +63,66 @@
     <!-- Start main-content -->
     <div class="main-content-area">
       <!-- Section: home -->
-      <section id="home" class="fullscreen bg-white-f7">
+      <section id="home" class="divider parallax layer-overlay overlay-dark-9" data-tm-bg-img="images/bg/bg4.jpg">
         <div class="display-table">
           <div class="display-table-cell">
-            <div class="container">
+            <div class="container pt-100 pb-100">
               <div class="row">
                 <div class="col-md-6 offset-md-3">
-                  <div class="text-center mb-60"><a href="#" class=""><img alt="images" src="images/logo-wide.png"></a>
-                  </div>
-                  <div class="bg-white-fc border-1px p-30 mb-0">
-                    <h3 class="text-theme-colored1 mt-0 pt-0"> Apply Now</h3>
-                    <hr>
+                  <div class="text-center mb-60"><a href="#" class=""><img alt="images"
+                        src="images/logo-wide-white.png"></a></div>
+                  <div class="bg-white-fc border-1px p-25">
+                    <h4 class="text-theme-colored1 text-uppercase m-0">Make an Appointment</h4>
+                    <div class="line-bottom mb-30"></div>
                     <p>Lorem ipsum dolor sit amet, consectetur elit.</p>
-                    <form id="job_apply_form" name="job_apply_form" action="includes/job.php" method="post"
-                      enctype="multipart/form-data">
+                    <form id="appointment_form" name="appointment_form" class="mt-30" method="post"
+                      action="includes/appointment.php">
                       <div class="row">
-                        <div class="col-sm-6">
-                          <div class="mb-3">
-                            <label>Name <small>*</small></label>
-                            <input name="form_name" type="text" placeholder="Enter Name" class="form-control">
+                        <div class="col-sm-12">
+                          <div class="mb-3 mb-10">
+                            <input name="form_name" class="form-control" type="text" placeholder="Enter Name"
+                              aria-required="true">
                           </div>
                         </div>
-                        <div class="col-sm-6">
-                          <div class="mb-3">
-                            <label>Email <small>*</small></label>
+                        <div class="col-sm-12">
+                          <div class="mb-3 mb-10">
                             <input name="form_email" class="form-control required email" type="email"
-                              placeholder="Enter Email">
+                              placeholder="Enter Email" aria-required="true">
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="mb-3 mb-10">
+                            <input name="form_phone" class="form-control required" type="text" placeholder="Enter Phone"
+                              aria-required="true">
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="mb-3 mb-10">
+                            <input name="form_appontment_date" class="form-control required date-picker" type="text"
+                              placeholder="Appoinment Date" aria-required="true">
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="mb-3 mb-10">
+                            <input name="form_appontment_time" class="form-control required time-picker" type="text"
+                              placeholder="Appoinment Time" aria-required="true">
                           </div>
                         </div>
                       </div>
-                      <div class="row">
-                        <div class="col-sm-6">
-                          <div class="mb-3">
-                            <label>Sex <small>*</small></label>
-                            <select name="form_sex" class="form-control required">
-                              <option value="Male">Male</option>
-                              <option value="Female">Female</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <div class="mb-3">
-                            <label>Job Post <small>*</small></label>
-                            <select name="form_post" class="form-control required">
-                              <option value="Finance Manager">Finance Manager</option>
-                              <option value="Area Manager">Area Manager</option>
-                              <option value="Country Manager">Country Manager</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="mb-3">
-                        <label>Message <small>*</small></label>
-                        <textarea name="form_message" class="form-control required" rows="5"
-                          placeholder="Your cover letter/message sent to the employer"></textarea>
-                      </div>
-                      <div class="mb-3">
-                        <label for="exampleFormControlFile1">C/V Upload</label>
-                        <input class="form-control-file file" name="form_attachment" type="file"
-                          id="exampleFormControlFile1" multiple data-show-upload="false" data-show-caption="true">
-                        <small>Maximum upload file size: 12 MB</small>
+                      <div class="mb-3 mb-10">
+                        <textarea name="form_message" class="form-control required" placeholder="Enter Message" rows="5"
+                          aria-required="true"></textarea>
                       </div>
                       <div class="mb-3 tm-sc-button mb-0 mt-20">
                         <input name="form_botcheck" class="form-control" type="hidden" value="">
-                        <button type="submit" class="btn btn-theme-colored1 btn-block btn-sm mt-20"
-                          data-loading-text="Please wait..."> Apply Now </button>
+                        <button type="submit" class="btn btn-theme-colored1 btn-sm" data-loading-text="Please wait...">
+                          Submit </button>
                       </div>
                     </form>
-                    <!-- Job Form Validation-->
+                    <!-- Appointment Form Validation-->
                     <script>
                       (function ($) {
-                        $("#job_apply_form").validate({
+                        $("#appointment_form").validate({
                           submitHandler: function (form) {
                             var form_btn = $(form).find('button[type="submit"]');
                             var form_result_div = '#form-result';

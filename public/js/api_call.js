@@ -1,10 +1,9 @@
 $(document).ready(function () {
   const base_url = "http://localhost:7000";
-  // const base_url = "https://shielded-citadel-34904.herokuapp.com"
   // const base_url = "https://www.testrxmd.com"
   // const base_url = "https://rxmdsite-production.up.railway.app";
   const new_url = window?.location?.search;
-
+  console.log(new_url)
   if (new_url.includes('checkout')) {
     localStorage.setItem("toCheckout", "true");
   }  
@@ -14,18 +13,9 @@ $(document).ready(function () {
   $("#populate-order").on("click", function () {
     loadOrderTable();
   });
-  $("#populate-affiliate").on("click", function () {
-    loadAffiliateRelationTable();
-  });
-
-  const currentDate = new Date().toISOString().split('T')[0];
-  $('#appt_appointment_date').attr('min', currentDate);
-  const currentTime = new Date().toLocaleTimeString('en-US', { hour12: true, hour: 'numeric', minute: 'numeric' });
-  $('#appt_appointment_time').attr('min', currentTime);
 
   const showJotForm= localStorage.getItem("showJotForm")
-  const isAffiliate=localStorage.getItem("isAffiliate")
-if(showJotForm=== "true" && isAffiliate!=="true")
+if(showJotForm=== "true")
 {
   localStorage.removeItem("showJotForm")
   let $ajaxload_popup = $(".ajaxload-popup");
@@ -48,6 +38,7 @@ if(showJotForm=== "true" && isAffiliate!=="true")
     url: `${base_url}/checkauth`,
     method: "GET",
     success: function (data) {
+      console.log(data)
       const check_url = window?.location?.href;
       if (check_url == `${base_url}/` && localStorage.getItem("toCheckout") === "true") {
         localStorage.removeItem("toCheckout")
@@ -58,16 +49,13 @@ if(showJotForm=== "true" && isAffiliate!=="true")
         localStorage.setItem("showJotForm", "true");
         location.href = "/checkout"
       }
-      data?.user?.affiliateLink?
-        localStorage.setItem("isAffiliate", "true"):
-        localStorage.setItem("isAffiliate", "false");
+      data?.user?.affiliateLink&&
+        localStorage.setItem("isAffiliate", "true");
       data?.user?.role?.toLowerCase() !== "admin" &&
         localStorage.setItem("isAdmin", "false");
       data?.user?.role?.toLowerCase() === "admin" &&
         localStorage.setItem("isAdmin", "true");
       localStorage.setItem("isLoged", "true");
-      // data?.user?.appointment&&$('#payment_info_pay').removeClass('d-none')&&
-      // $('#payment_info_next').addClass('d-none');
       checkLogin();
     },
     error: function (data) {
@@ -100,6 +88,7 @@ if(showJotForm=== "true" && isAffiliate!=="true")
   //register api call
   $("#register_user").on("click", function (event) {
     event.preventDefault();
+    console.log(window?.location?.href)
     const urlParams = new URLSearchParams(window.location.search);
     const affiliatedBy = urlParams.get('affiliatedBy');
     const url=affiliatedBy?`${base_url}/register?affiliatedBy=${affiliatedBy}`:`${base_url}/register`
@@ -177,7 +166,6 @@ if(showJotForm=== "true" && isAffiliate!=="true")
       },
     });
   });
-
   //forgot password
   $("#forgot_password").on("click", function (event) {
     event.preventDefault();
@@ -215,7 +203,6 @@ if(showJotForm=== "true" && isAffiliate!=="true")
       },
     });
   });
-  
   //reset password
   $("#reset_button").on("click", function (event) {
     event.preventDefault();
@@ -322,6 +309,7 @@ function ValidateEmail(email) {
   const urlParams = new URLSearchParams(window.location.search);
   const myParam = urlParams.get("error");
   const intakeParam = urlParams.get("intakeFilled");
+  console.log(intakeParam)
   if (intakeParam === "false") localStorage.setItem("showJotFormCheckout", "true");
   if (myParam == "Google-Auth-Not-Exist") {
     $("#login_error").removeClass("d-none");
@@ -347,13 +335,12 @@ function ValidateEmail(email) {
       url: `${base_url}/getproductbyid/${id}`,
       method: "GET",
       success: function (data) {
-        $("div").children("#product-name").val(data?.product_name);
+        $("div").children("#product-name").val(data.product_name);
         // $("div").children("#product-description").val(data.description);
-        $("div").children("#product-price").val(data?.price);
+        $("div").children("#product-price").val(data.price);
         // $("div").children("#product-type").val(data.type);
-        $("div").children("#product-catagory-select").val(data?.productCatagory).change();
+        $("div").children("#product-type-select").val(data.type).change();
 
-        $("div").children("#product-type-select").val(data?.type).change();
       },
     });
   };
@@ -372,12 +359,11 @@ function ValidateEmail(email) {
     // const description = $("div").children("#product-description").val();
     const price = $("div").children("#product-price").val();
     const type = $("div").children("#product-type-select").val();
-    const productCatagory = $("div").children("#product-catagory-select").val();
     $("#update_product_text").addClass("d-none");
     $("#update_product_text_spin").removeClass("d-none");
     $.ajax({
       url: `${base_url}/editproduct/${selected_id}`,
-      data: { product_name, price, type, productCatagory },
+      data: { product_name, price, type },
       method: "PUT",
       success: function () {
         $("#product_notify")
@@ -417,7 +403,6 @@ function ValidateEmail(email) {
     const price = $("#new-product-price").val()
     // const description = $("#new-product-description").val()
     const type = $("#new-product-type-select").val()
-    const productCatagory = $("#new-product-catagory-select").val()
     $("#add-new-product-error").addClass("d-none");
     if (!product_name || !price) {
       $("#add_product_text").removeClass("d-none");
@@ -429,7 +414,7 @@ function ValidateEmail(email) {
     $.ajax({
       url: `${base_url}/addproduct`,
       method: "POST",
-      data: { product_name, price, type, productCatagory },
+      data: { product_name, price, type },
       success: function (data) {
         $("#add_product_text").removeClass("d-none");
         $("#add_product_text_spin").addClass("d-none");
@@ -464,21 +449,7 @@ function ValidateEmail(email) {
       },
     });
   });
-//user-affiliate
-$("#user_affiliate_search").on("click", function (event) {
-  const email=$('#search-user-affiliate-email').val()
-  if (!email) {
-    $("#user_affiliate_search_notify")
-      .text("please fill the search query")
-      .removeClass("d-none alert alert-danger")
-      .addClass("alert alert-primary");
-    return;
-  }
-  $("#user_affiliate_search_notify").addClass("d-none");
-  $("#search_user_affiliate_text").addClass("d-none");
-  $("#search_user_affiliate_text_spin").removeClass("d-none");
-  loadAffiliateRelationTable(email)
-})
+
   //seacrh user
   $("#user_search").on("click", function (event) {
     event.preventDefault();
@@ -859,74 +830,6 @@ $("#user_affiliate_search").on("click", function (event) {
       },
     });
   };
-  const loadAffiliateRelationTable = (option='') => {
-    $("#user-affiliate-table-body").empty();
-    $.ajax({
-      url: `${base_url}/affiliaterelation?affiliator_email=${option}`,
-      type: "GET",
-      success: (affiliates) => {       
-        affiliates?.forEach((affiliate) => {
-          let affiliateRows = "";
-          if (affiliate?.affiliate?.length) {
-            affiliateRows = `<tr>
-              <td rowspan="${affiliate.affiliate.length + 1}">${affiliate.first_name} ${affiliate.last_name}</td>
-              <td rowspan="${affiliate.affiliate.length + 1}">${affiliate.email}</td>
-              <td rowspan="${affiliate.affiliate.length + 1}">${affiliate.affiliate.length}</td>
-
-            </tr>`;
-            affiliate.affiliate.forEach((aff) => {
-              affiliateRows += `<tr>
-                <td>${aff.first_name} ${aff.last_name}</td>
-                <td>${aff.email}</td>
-              </tr>`;
-            });
-          } else {
-            affiliateRows = `<tr>
-              <td>${affiliate.first_name} ${affiliate.last_name}</td>
-              <td>${affiliate.email}</td>
-              <td>0</td>
-              <td>-</td>
-              <td>-</td>
-            </tr>`;
-          }
-          $("#user-affiliate-table-body").append(`
-            ${affiliateRows}
-          `);
-        });
-        $("#search_user_affiliate_text").removeClass("d-none");
-        $("#search_user_affiliate_text_spin").addClass("d-none");
-      },
-      error: function (data) {
-          $("#user_affiliate_search_notify")
-            .text(data?.responseJSON?.message)
-            .removeClass("d-none alert alert-primary")
-            .addClass("alert alert-danger");
-          $("#search_user_affiliate_text").removeClass("d-none");
-          $("#search_user_affiliate_text_spin").addClass("d-none");
-      }
-    });
-  };
-  // const loadAffiliateRelationTable = () => {
-  //   $("#user-affiliate-table-body").empty();
-  //   $.ajax({
-  //     url: `${base_url}/affiliaterelation`,
-  //     type: "GET",
-  //     success: (affiliates) => {
-  //       affiliates?.forEach((affiliate) => {
-  //         $("#user-affiliate-table-body").append(`
-  //         <tr>
-  //         <td colspan=${affiliate?.affiliate?.length||1}>${affiliate?.first_name + ' ' + affiliate?.last_name || "-"}</td>
-  //         <td colspan=${affiliate?.affiliate?.length||1}>${affiliate?.email || "-"}</td>
-  //         ${affiliate?.affiliate.map(e=>
-  //           `<td>${e?.first_name + ' ' +e?.last_name || "-"}</td>
-  //           <td>${e?.email || "-"}</td>`
-  //         )}
-  //         <td colspan=${affiliate?.affiliate?.length}</td>
-  //         </tr>`);
-  //       });
-  //     },
-  //   });
-  // };
   const formatPhoneNumber = (phoneNumberString) => {
     var cleaned = ('' + phoneNumberString).replace(/\D/g, '');
     var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
@@ -958,41 +861,20 @@ const loadUserPaymentMethod=()=>{
 
     $('.card_selector').on('change', function() {
       var selectedValue = $('input[name="card"]:checked').val();
+      console.log(selectedValue);
     });
     },
     error: (error) => {
+      console.log(error)
     },
   })
 }
-$('#schedule-appointment-order').on('click', function (event) {
-  event.preventDefault()
-  const product_ordered =$('#telehealth-appt-checkbox:checked').parent('[id=tel-product]').data('productid')
-  $("#schedule_appointment_text").addClass("d-none");
-  $("#schedule_appointment_text_spin").removeClass("d-none");
-  if (!product_ordered) {
-  $("#select-product-error").removeClass("d-none").text("Please select service for the appointment")
-   return
-  }
-  $.ajax({
-    url: `${base_url}/appointment`,
-    type: "POST",
-    contentType: 'application/json',
-    data: JSON.stringify({ productId:product_ordered }),
-    success: () => {
-      location.href='/appointment'
-    },
-    error: (error) => {
-      $("#select-product-error").removeClass("d-none").text(error.responseJSON.message)
-      $("#schedule_appointment_text").removeClass("d-none");
-      $("#schedule_appointment_text_spin").addClass("d-none");
-    },
+loadUserPaymentMethod()
 
-  })
-})
   //copmlete order
   $('#complete-order').on('click', function (event) {
     event.preventDefault()
-    let product_ordered = []
+    const product_ordered = []
     $('#telehealth-appt-checkbox:checked').parent('[id=tel-product]').each(function () {
       product_ordered.push({ productId: $(this).data('productid') })
     })
@@ -1051,68 +933,19 @@ $('#schedule-appointment-order').on('click', function (event) {
       save_payment_info: $("#saveCardCheckbox").is(':checked')
     } 
     const apply_discount=$("#applyDiscountCheckbox").is(':checked')
-    //subscription
-    const payment_type='one_time'
-    // $('input[name="subscriptionType"]:checked').val()
-    let payment_type_object={}
-      if (payment_type === "subscription") {
-        const selectedDuration = $('#duration').val();
-        payment_type_object={
-          subscription:true,
-          subscriptionPeriod:Number(selectedDuration)
-        }
-        product_ordered=product_ordered[0]
-        $.ajax({
-          url: `${base_url}/addordersubscription`,
-          method: "POST",
-          contentType: 'application/json',
-          data: JSON.stringify({  payment_detail, product_ordered,...payment_type_object }),
-          success: function ({is_fitness_plan_exist,is_meal_plan_exist}) {
-            $('#spinner-div').hide();
-            $('input[id="telehealth-appt-checkbox"]').prop('checked', false);
-            if (is_fitness_plan_exist&&is_meal_plan_exist) {
-             return location.href = '/fitness-plan'
-            }
-            if (is_fitness_plan_exist) {
-             return location.href = '/fitness-plan'
-            }
-            if (is_meal_plan_exist) {
-              return location.href = '/meal-plan'
-            }
-          
-            $("#cart-total-price").text(0);
-            loadUserPaymentMethod()
-          },
-          error: function (data) {
-            $('#spinner-div').hide();
-            $('#complete-order-error').removeClass('d-none').
-              text(data.responseJSON.message)
-          },
-        });
-      }
-      
     //here make ajax call to compelete the order
-    else{
     $.ajax({
       url: `${base_url}/addorder`,
       method: "POST",
       contentType: 'application/json',
-      data: JSON.stringify({  payment_detail, product_ordered,apply_discount,...payment_type_object }),
-      success: function ({is_appointment_exist,product_names,is_fitness_plan_exist,is_meal_plan_exist}) {
+      data: JSON.stringify({  payment_detail, product_ordered,apply_discount }),
+      success: function (data) {
         $('#spinner-div').hide();
         $('input[id="telehealth-appt-checkbox"]').prop('checked', false);
-        if (is_fitness_plan_exist&&is_meal_plan_exist) {
-         return location.href = '/fitness-plan'
+        let isAppointmentExist = data.is_appointment_exist
+        if (isAppointmentExist) {
+          location.href = '/appt'
         }
-        if (is_fitness_plan_exist) {
-         return location.href = '/fitness-plan'
-        }
-        if (is_meal_plan_exist) {
-          return location.href = '/meal-plan'
-        }
-        if (is_appointment_exist) {
-          return location.href = '/appt'
-          }
         else {
           $("#order_success_text").text("Close")
           $("#order-confirmation").addClass("btn-secondary").removeClass("btn-primary")
@@ -1121,8 +954,8 @@ $('#schedule-appointment-order').on('click', function (event) {
           $('#close-mod-btn').removeClass('d-none');
           $("#order-success-message").html(function () {
             return `
-            Thank you for renewing  ${product_names.slice(0, -1).join(', ')}${product_names.length > 1 ?
-                ' and ' : ''}${product_names[product_names.length - 1]} with TestRxMD.
+            Thank you for renewing  ${data.product_names.slice(0, -1).join(', ')}${data.product_names.length > 1 ?
+                ' and ' : ''}${data.product_names[data.product_names.length - 1]} with TestRxMD.
             We will begin working on your order immediately. If you have any questions or concerns, please call (812) 296-6499.
             `;
           });
@@ -1142,86 +975,7 @@ $('#schedule-appointment-order').on('click', function (event) {
           text(data.responseJSON.message)
       },
     });
-  }
   })
-
-  //copmlete appt order
-  // $('#complete-appt-order').on('click', function (event) {
-  //   event.preventDefault()
-  //   const product_ordered = []
-  //   const product_id=$('#appt-product').data('productid')
-  //   product_ordered.push({productId:product_id})
-  //   if (product_ordered.length === 0) {
-  //     return
-  //   }
-  //   //please select one or more product
-  //   !($("#checkout-form-ccNumber").val()) ? $("#checkout-form-ccNumber").css('border-color', 'red') :
-  //     $("#checkout-form-ccNumber").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-ccExpiry").val() ? $("#checkout-form-ccExpiry").css('border-color', 'red') :
-  //     $("#checkout-form-ccExpiry").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-cvc").val() ? $("#checkout-form-cvc").css('border-color', 'red') :
-  //     $("#checkout-form-cvc").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-firstname-on-cc").val() ? $("#checkout-form-firstname-on-cc").css('border-color', 'red') :
-  //     $("#checkout-form-firstname-on-cc").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-lastname-on-cc").val() ? $("#checkout-form-lastname-on-cc").css('border-color', 'red') :
-  //     $("#checkout-form-lastname-on-cc").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-firstname").val() ? $("#checkout-form-firstname").css('border-color', 'red') :
-  //     $("#checkout-form-firstname").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-lastname").val() ? $("#checkout-form-lastname").css('border-color', 'red') :
-  //     $("#checkout-form-lastname").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-email").val() ? $("#checkout-form-email").css('border-color', 'red') :
-  //     $("#checkout-form-email").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-address").val() ? $("#checkout-form-address").css('border-color', 'red') :
-  //     $("#checkout-form-address").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-city").val() ? $("#checkout-form-city").css('border-color', 'red') :
-  //     $("#checkout-form-city").css('border-color', 'rgb(206, 212, 218)')
-  //   !$('#checkout-form-state').val() ? $("#checkout-form-state").css('border-color', 'red') :
-  //     $("#checkout-form-state").css('border-color', 'rgb(206, 212, 218)')
-  //   !$("#checkout-form-zip").val() ? $("#checkout-form-zip").css('border-color', 'red') :
-  //     $("#checkout-form-zip").css('border-color', 'rgb(206, 212, 218)')
-  //   $("#select-product-error").addClass("d-none")
-  //   $('#spinner-div').show();
-  //   $('#complete-order-error').addClass('d-none')
-  //   // $(this).prop('disabled', true);
-  //   const payment_detail = {
-  //     cardNumber: $("#checkout-form-ccNumber").val(),
-  //     expirtationDate: $("#checkout-form-ccExpiry").val(),
-  //     cardCode: $("#checkout-form-cvc").val(),
-  //     ownerFirstName: $("#checkout-form-firstname-on-cc").val(),
-  //     ownerLastName: $("#checkout-form-lastname-on-cc").val(),
-
-  //     //billing info
-  //     billingFirstName: $("#checkout-form-firstname").val(),
-  //     billingLastName: $("#checkout-form-lastname").val(),
-  //     email: $("#checkout-form-email").val(),
-  //     address: $("#checkout-form-address").val(),
-  //     city: $("#checkout-form-city").val(),
-  //     state: $('#checkout-form-state').val(),
-  //     zip: $("#checkout-form-zip").val(),
-  //     customer_payment_profile_id: $('input[type="radio"].card_selector:checked').val(),
-  //     use_exist_payment: !($("#otherPaymentCheckbox").is(':checked')),
-  //     save_payment_info: $("#saveCardCheckbox").is(':checked')
-  //   } 
-  //   const apply_discount=$("#applyDiscountCheckboxAppt").is(':checked')
-  //   //here make ajax call to compelete the order
-  //   $.ajax({
-  //     url: `${base_url}/addorder`,
-  //     method: "POST",
-  //     contentType: 'application/json',
-  //     data: JSON.stringify({  payment_detail, product_ordered,apply_discount }),
-  //     success: function (data) {
-  //       $('#spinner-div').hide();
-  //       $('input[id="telehealth-appt-checkbox"]').prop('checked', false);
-  //         location.href = '/account'
-  //     },
-  //     error: function (data) {
-  //       $('#spinner-div').hide();
-  //       $('#complete-order-error').removeClass('d-none').
-  //         text(data.responseJSON.message)
-  //     },
-  //   });
-  // })
-
 //change password
 $('#success_toast_page .close').on('click', function() {
   $(this).closest('#success_toast_page').removeClass('show');
@@ -1277,6 +1031,7 @@ $.ajax({
 let is_payable_exist=false
 let payable_amount=0
 function getAffiliateTotalAmount(){
+  console.log("in aff amount")
   is_payable_exist=false
   $.ajax({
     url: `${base_url}/affiliate/amount`,
@@ -1286,19 +1041,19 @@ function getAffiliateTotalAmount(){
       if((Number(data?.amount))>0){
         payable_amount=Number(data?.amount)  
       }
-      // Number(data?.amount)<=0?$("#apply_discount_p").addClass("d-none"):
-      // $("#apply_discount_p").removeClass("d-none")
+      Number(data?.amount)<=0?$("#apply_discount_p").addClass("d-none"):
+      $("#apply_discount_p").removeClass("d-none")
       let cash_payable=0
       if(data?.amount&&data?.amount>20){
         $('#get_code_btn').prop('disabled', false);
-        $("#get_paid_con").removeClass('d-none')
         is_payable_exist=true  
       }
       //show 70% for cashout
-      cash_payable=data?.amount
-      $('#total_paid_amount').text(`Total Payable Amount= $${cash_payable||0}`)
+      cash_payable=data?.amount*0.7
+      $('#total_paid_amount').text(`Total Payable Amount= $${cash_payable}`)
     },
     error: function (data) {
+      console.log("in aff error")
       $('#total_paid_amount').text(`Total Payable Amount= $0/E`)
     },
   });
@@ -1306,7 +1061,6 @@ function getAffiliateTotalAmount(){
 }
 $('[data-toggle="tooltip"]').tooltip()
 //get_paid
-
 $('#get_paid_check').change(function() {
   if ($(this).is(':checked')&&is_payable_exist) {
     $('#get_paid_part').removeClass('d-none')
@@ -1341,25 +1095,6 @@ else{
 }
 });
 
-$('#applyDiscountCheckboxAppt').change(function() {
-  if ($(this).is(':checked')) {
-  const appt_price= Number($("#appt_pay_price").text())
-  if((appt_price*0.9)<Number(payable_amount)){
-    const discountedPrice=Number(total_price)*0.1
-    $("#appt-total-price").text(discountedPrice);
-  }
-  else{
-    const discountedPrice=Number(appt_price)-Number(payable_amount)
-    $("#appt-total-price").text(discountedPrice);
-  }
-}
-else{
-  const appt_price= Number($("#appt_pay_price").text())
-  $("#appt-total-price").text(appt_price);
-
-}
-})
-
 //apply discount
 $('#applyDiscountCheckbox').change(function() {
   if ($(this).is(':checked')) {
@@ -1371,6 +1106,7 @@ $('#applyDiscountCheckbox').change(function() {
         let product_price = Number($(this).children("span").text());
         total_price = total_price + product_price;
       });
+      console.log((total_price*0.9),Number(payable_amount))
       if((total_price*0.9)<Number(payable_amount)){
         const discountedPrice=Number(total_price)*0.1
         $("#cart-total-price").text(discountedPrice);
@@ -1392,18 +1128,15 @@ $('#applyDiscountCheckbox').change(function() {
   }
 });
 
-function getQrCode(route){
+function getQrCode(){
   $.ajax({
     url: `${base_url}/affiliatecode`,
     method: "GET",
     success: function (data) {
-      // $('#generateQR').addClass('d-none')
-      // $('#copy_url_div').removeClass('d-none')
+      $('#generateQR').addClass('d-none')
+      $('#copy_url_div').removeClass('d-none')
       $('#QRcode_image').attr('src', data.src);
-      if(route){
-          location.href = '/affiliate'
-      }
-      // $('#qr_url_input').val(data.url)
+      $('#qr_url_input').val(data.url)
     },
   });
 }
@@ -1456,6 +1189,7 @@ const loadAffiliateTable = () => {
     url: `${base_url}/affiliate/detail`,
     type: "GET",
     success: ({affilate_detail}) => {
+      console.log(affilate_detail)
       affilate_detail?.forEach((affilate) => {
         $("#affiliate_table_body").append(`
       <tr>
@@ -1471,44 +1205,6 @@ const loadAffiliateTable = () => {
     },
   });
 };
-const loadAppointmentTable = () => {
-  $("#appts_table_body").empty();
-  $.ajax({
-    url: `${base_url}/appointment/detail`,
-    type: "GET",
-    success: ({appointments}) => {
-      appointments?.forEach((appointment) => {
-        let timeString='-'
-        let dateString='-'
-        if(appointment?.appointmentDateTime){
-          const datetime = new Date(appointment?.appointmentDateTime);
-           timeString = datetime.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-           dateString=new Date(appointment?.appointmentDateTime).toLocaleDateString()
-        }
-     
-        $("#appts_table_body").append(`
-      <tr>
-        <td>${dateString}</td>
-        <td>${timeString}</td>
-        <td>${appointment?.doctor?appointment?.doctor?.first_name+' '+appointment?.doctor?.last_name:'-'}</td>
-        <td>
-        ${appointment.joinUrl ?
-          `<a href="${appointment.joinUrl}" target="_blank" class="btn btn-primary m-0 p-0 ${((new Date(appointment.appointmentDateTime) > new Date())||!appointment?.paymentStatus) ? 'disabled' : ''}">Zoom Link</a>`
-          : '-'
-        }
-       </td>
-      
-        <td>${appointment?.paymentStatus?'Paid':'unpaid'}</td>
-        <td>${appointment?.appointmentStatus} ${((appointment?.appointmentStatus==="in progress"||appointment?.appointmentStatus==="pending")&&!appointment?.paymentStatus)?"<a href='/appointment'>(compelete schedule)</a>":''}</td>
-      </tr>`);
-      });
-    },
-    error: (error) => {
-    
-    },
-  });
-};
-
 function confirmOtp(){
   const otp=$('#otp_code_input').val()
   $('#get_paid_error').addClass('d-none')
@@ -1526,10 +1222,12 @@ function confirmOtp(){
    $("#confirm_code_text_spin").addClass("d-none");
    $("#confirm_code_text").removeClass("d-none");
    $('#get_paid_part').addClass('d-none')
+   console.log('reload table and amount')
    getAffiliateTotalAmount()
    loadAffiliateTable()
     },
     error:function(err){
+      console.log("in confirm error",err.responseJSON.message)
       $("#confirm_code_text_spin").addClass("d-none");
       $("#confirm_code_text").removeClass("d-none");
       $('#get_paid_error').removeClass('d-none').text(err.responseJSON.message)
@@ -1548,34 +1246,22 @@ $('#confirm_otp_btn').on("click",()=>{
 
 //get affiliate
 $('#generateQR').on('click',function(event){
-  getQrCode(true)
+getQrCode()
 });
 if(window?.location?.href==`${base_url}/affiliate` && 
 localStorage.getItem("isAffiliate")==="true"){
 getQrCode()
 }
-
 if(window?.location?.href==`${base_url}/account` && 
 localStorage.getItem("isAffiliate")==="true"){
   loadAffiliateTable()
   getAffiliateTotalAmount()
 }
-if(window?.location?.href==`${base_url}/account`){
-  loadAppointmentTable()
-}
-if((window?.location?.href==`${base_url}/checkout`||
-window?.location?.href==`${base_url}/pp`||
-window?.location?.href==`${base_url}/appointment-checkout`) && 
+if(window?.location?.href==`${base_url}/checkout` && 
 localStorage.getItem("isAffiliate")==="true"){
   getAffiliateTotalAmount()
 }
-if(window?.location?.href==`${base_url}/checkout`||
-window?.location?.href==`${base_url}/pp`||
-window?.location?.href==`${base_url}/appointment-checkout`){
-  loadUserPaymentMethod()
-}
-
-
+console.log("pamount"+payable_amount)
 // if(localStorage.getItem("isAffiliate")!=="true"||payable_amount==0){
 //   $("#apply_discount_p").addClass("d-none")
 // }
@@ -1592,281 +1278,6 @@ $('#copy_url_btn').click(function() {
     $('#appointment-form').removeClass('d-none')
     $('#continue-schedule').addClass('d-none')
   })
-  // $('#continue-schedule').on('click', () => {
-  //   const product_ordered =$('#telehealth-appt-checkbox:checked').parent('[id=tel-product]').data('productid')
-  //   console.log(product_ordered)
-  //   if (product_ordered.length === 0) {
-
-  //     $("#select-product-error").removeClass("d-none")
-  //     $('body').scrollTo('.tbl-shopping-cart');
-  //     return
-  //   }
-  //   $.ajax({
-  //     url: `${base_url}/appointment`,
-  //     type: "POST",
-  //     success: ({providers}) => {
-  //       $("#appt_doctor").append(`
-  //       <option value="">Select Doctor*</option>
-  //       `)
-  //       providers?.forEach((provider) => {
-  //         $("#appt_doctor").append(`
-  //         <option value=${provider?.id}>${provider?.first_name+' '+ provider?.last_name}</option>
-  //         `)
-  //       })
-  //       location.href='/appointment'
-
-  //     },
-  //   })
-  // })
-  //doctor dashboard
-  $('#therapy_category').change(function() {
-  if ($(this).val() !== '') {
-    $('#therapy_sub_category').prop('disabled', false);
-  } else {
-    $('#therapy_sub_category').prop('disabled', true);
-  }
-
-  if ($(this).val() === "WL") {
-    $('#therapy_sub_category').empty().append(`
-    <option value="Stim-Free">Stim-Free</option>
-    <option value="Stimulant-Based">Stimulant-Based</option>`);
-  }
-  if ($(this).val() === "Peptides") {
-    $('#therapy_sub_category').empty().append(`
-    GH Therapy/Nootropics/Weight-Loss/Rejuvination
-      <optgroup label="GH_Therapy">
-      <option value="Sermorelin">Sermorelin</option>
-      <option value="Ipamorelin">Ipamorelin </option>
-      <option value="Sermorelin/Ipamorelin">Sermorelin/Ipamorelin</option>
-      <option value="GRF 1-29"> Ipamorelin+Mod GRF 1-29 (CJC 1295 without DAC)</option>
-      <option value="MK-677">MK-677</option>
-      </optgroup>
-      <optgroup label="Nootropics">
-      Dihexa, Semax, Selank, 1-Amino-MQ
-      <option value="Dihexa">Dihexa</option>
-      <option value="Semax">Semax </option>
-      <option value="Selank">Selank</option>
-      <option value="1-Amino-MQ">1-Amino-MQ</option>
-      </optgroup>
-      <optgroup label="Weight_Loss">
-      <option value="AOD-9604">AOD-9604</option>
-      </optgroup>
-      <optgroup label="Rejuvination"></optgroup>
-      <optgroup label="Anti-Aging/Longevity">
-      <option value="BPC-157">BPC-157</option>
-      <option value="GHK-Cu">GHK-Cu</option>
-      </optgroup>
-      <optgroup label="Sexual_Dysfunction">
-      <option value="PT-141">PT-141</option>
-      <option value="Kisspeptin-10">Kisspeptin-10</option>
-      </optgroup>
-
-    `);
-  }
-});
-// $("#appt_appointment_date, #appt_appointment_time").on("change", function() {
-//     if ($("#appt_appointment_date").val() && $("#appt_appointment_time").val()) {
-//       getAvailableProvider()
-//     } else {
-//       // Disable the select element if either input is empty
-//       $("#appt_doctor").prop("disabled", true);
-//     }
-//   });
-
-//create appt
- $("#create_appointment").on("click", function (event) {
-  event.preventDefault();
-  $("#login_error").addClass("d-none");
-
-  const patientFirstName = $("#appt_first_name").val();
-  const patientLastName = $("#appt_last_name").val();
-  const patientEmail = $("#appt_email").val();
-  const patientPhoneNumber = $("#appt_phone").val();
-  const date= $("#appt_appointment_date").val();
-  const time = $("#appt_appointment_time").val();
-  const doctorId= $("#appt_doctor").val();
-  const formattedTime = moment(time, 'hh:mm A').format('HH:mm');
-  const appointmentDateTime = moment(date).format('YYYY-MM-DD') + 'T' + formattedTime;
-  
-  const message=$("#appt_appointment_message").val()
-  $("#appointment_error_message").addClass("d-none")
-  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  if(!patientEmail
-    ||!patientFirstName
-    ||!patientLastName
-    ||!patientPhoneNumber
-    ||!doctorId){
-    $("#appointment_error_message").removeClass("d-none").text("plase fill all field")
-    return
-    }
-  $("#create_appointment_text").addClass("d-none");
-  $("#create_appointment_text_spin").removeClass("d-none");
-  $.ajax({
-    url: `${base_url}/appointment`,
-    method: "PUT",
-    contentType: 'application/json',
-    data: JSON.stringify({patientEmail,patientFirstName,doctorId,
-    patientLastName,patientPhoneNumber,appointmentDateTime,
-    message,userTimezone}),
-    success: function (data) {
-    //redirect to the next page
-     location.href='/appointment-checkout'
-    },
-    error: function (data) {
-      $('#appointment_error_message').removeClass('d-none').text(data.responseJSON.message)
-      $("#create_appointment_text").removeClass("d-none");
-      $("#create_appointment_text_spin").addClass("d-none");
-    },
-  });
-});
-
-//meal-plan
-$("#meal_plan_form").submit(function(event){
-  event.preventDefault(); // prevent the form from submitting normally
-  const formData = $(this).serializeArray();
-  var formDataObj = {};
-$.each(formData, function(index, field) {
-  formDataObj[field.name] = field.value;
-});
-$.ajax({
-  url: `${base_url}/mealplan`,
-  method: "POST",
-  contentType: 'application/json',
-  data: JSON.stringify(formDataObj),
-  success: function (data) {
-  //redirect to the next page
-   location.href='/account'
-  },
-  error: function (data) {
-    $("#create_appointment_text").removeClass("d-none");
-    $("#create_appointment_text_spin").addClass("d-none");
-  },
-});
-
-})
-//fitness-plan
-$("#fitness_plan_form").submit(function(event){
-  event.preventDefault(); // prevent the form from submitting normally
-  const formData = $(this).serializeArray();
-  var formDataObj = {};
-$.each(formData, function(index, field) {
-  formDataObj[field.name] = field.value;
-});
-$.ajax({
-  url: `${base_url}/fitnessplan`,
-  method: "POST",
-  contentType: 'application/json',
-  data: JSON.stringify(formDataObj),
-  success: function (data) {
-  //redirect to the next page
-   location.href='/account'
-  },
-  error: function (data) {
-    $("#create_appointment_text").removeClass("d-none");
-    $("#create_appointment_text_spin").addClass("d-none");
-  },
-});
-
-})
-
-  // Show subscription options when subscription is selected
-  $('input[name="subscriptionType"]').change(function() {
-    if ($(this).val() === "subscription") {
-      $('#subscriptionOptions').show();
-      $('#apply_discount_plan').addClass('d-none');
-      $('#applyDiscountCheckbox').prop('checked', false);
-      $('#applyDiscountCheckbox').trigger('change');
-    } else {
-      $('#subscriptionOptions').hide();
-      $('#apply_discount_plan').removeClass('d-none');
-    }
-  });
-  
-
-//bot
-const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const d = new Date();
-  const day = days[d.getDay()];
-  let hour = d.getHours();
-  let minutes = d.getMinutes();
-  const ampm = hour >= 12 ? 'pm' : 'am';
-  hour = hour % 12;
-  hour = hour ? hour : 12;
-  minutes = minutes < 10 ? '0' + minutes : minutes;
-  let time = day + ', ' + hour + ':' + minutes + ' '+ ampm;
-  $("#current-date-time").text(time);
-
-//   const base_url = "https://shielded-citadel-34904.herokuapp.com"
-
-
-  // const base_url = "https://www.testrxmd.com"
- //Toggle fullscreen
-        $(".chat-bot-icon").click(function (e) {
-            $(this).children('img').toggleClass('hide');
-            $(this).children('svg').toggleClass('animate');
-            $('.chat-screen').toggleClass('show-chat');
-        });
-        $('.chat-mail button').click(function () {
-            $('.chat-mail').addClass('hide');
-            $('.chat-body').removeClass('hide');
-            $('.chat-input').removeClass('hide');
-            $('.chat-header-option').removeClass('hide');
-        });
-        $('.end-chat').click(function () {
-            $('.chat-body').addClass('hide');
-            $('.chat-input').addClass('hide');
-            $('.chat-session-end').removeClass('hide');
-            $('.chat-header-option').addClass('hide');
-        });
-
-        $('.chat-input input').keypress(function (e) {
-            const message=$('.chat-input input').val()
-            const isNotBotTyping=$('#bot-typing').hasClass('hide')
-            const key = e.which;
-            if(key == 13 && message.trim() && isNotBotTyping){
-                $(`<div class="chat-bubble me">${message}</div>`).insertBefore('.chat-body #bot-typing');
-                $('.chat-input input').val('')
-                $('#bot-typing').removeClass('hide')
-                scrollBottom()
-                sendMessageToBot(message)
-            }
-        }); 
-        $('#send-message-bot').click(function () {
-            const message=$('.chat-input input').val()
-            const isNotBotTyping=$('#bot-typing').hasClass('hide')
-            if(message.trim() && isNotBotTyping){
-                $(`<div class="chat-bubble me">${message}</div>`).insertBefore('.chat-body #bot-typing');
-                $('.chat-input input').val('')
-                $('#bot-typing').removeClass('hide')
-                scrollBottom()
-                sendMessageToBot(message)
-            }
-         
-        });
-function sendMessageToBot(message){
-    $.ajax({
-        url: `${base_url}/chatcompliation`,
-        method: "POST",
-        data: {message},
-        success: function (data) {
-        $('#bot-typing').addClass('hide')
-        $(`<div class="chat-bubble you">${data.message}</div>`).insertBefore('.chat-body #bot-typing');
-        },
-        error: function (data) {
-            $('#bot-typing').addClass('hide')
-            $(`<div class="chat-bubble you">system is busy</div>`).insertBefore('.chat-body #bot-typing');
-        },
-    });
-}
-function scrollBottom(){
-  const chatBody = $('.chat-body');
-if (chatBody.length > 0) {
-    chatBody.animate({
-        scrollTop: chatBody.get(0).scrollHeight
-    }, 1000);
-}
-}
-   scrollBottom()
 
 });
 $(window).on('load', function () {

@@ -6,7 +6,6 @@ const Product = require("../models/productModel");
 const { Op } = require("sequelize");
 const path = require("path");
 const moment = require('moment');
-const momentZone = require("moment-timezone");
 const util = require('util');
 const QRCode = require('qrcode');
 const asyncVerify = util.promisify(jwt.verify);
@@ -20,17 +19,14 @@ const {
   get2faVerfication,
   verify2faVerfication,
   getAffiliatePayableAmount,
-  generateOtp,
-  getProviders,
-  getAppointmentsByFilter,
-  appointmentUnpaidExist
+  generateOtp
 } = require("../helper/user");
 const { handleError } = require("../helper/handleError");
 const { validationResult } = require("express-validator");
 const { sendEmail ,sendOtpEmail, sendAffiliatePaidEmail} = require("../helper/send_email");
 const { removeEmptyPair } = require("../helper/reusable");
 const { sendPayout } = require("../functions/paypal");
-const Affiliate = require("../models/affiliateModel");
+const Affliate = require("../models/affiliateModel");
 const filePath = path.join(__dirname,"..","..",'public', 'images','testrxmd.gif');
 exports.registerUser = async (req, res, next) => {
 
@@ -52,8 +48,7 @@ exports.registerUser = async (req, res, next) => {
       TestRxMD Email Confirmation
       </h1>
       <p style="text-align:start;padding:10px 20px;">
-      Follow the link to confirm your email. If you are joining only for affiliate purposes, 
-      you can skip the form that will appear after you have logged in.
+      Follow the link to confirm your email.
       <a href="${process.env.BASE_URL}/confirm?verifyToken=${token}">click here<a/>
       </p>
       <div style="text-align:center;padding-bottom:30px">
@@ -186,12 +181,13 @@ exports.loginUser = async (req, res, next) => {
         process.env.LONG_ACCESS_TOKEN_EXPIRY:
         process.env.ACCESS_TOKEN_EXPIRES
         const currentDate = new Date();
+        console.log(token_expiry,rememberme)
         const cookie_expires = moment(currentDate).add(token_expiry.match(/^(\d+)/)[1],'days').toDate();
         res.cookie('access_token',access_token, {
           path: "/",
           httpOnly:true,
           expires:cookie_expires,
-          secure: true,
+          // secure: true,
         })
       
         return res
@@ -412,9 +408,7 @@ exports.checkAuth = async (req, res, next) => {
       if (!check_user?.isActive) {
         handleError("This account is inactive, please contact our customer service", 403);
       }
-      return res.json({ message: "success", auth: true, user: 
-      {...user,affiliateLink:check_user?.affiliateLink,
-        appointment:check_user?.appointment} });
+      return res.json({ message: "success", auth: true, user: {...user,affiliateLink:check_user.affiliateLink} });
     }
     handleError("please login", 403);
   } catch (err) {
@@ -500,63 +494,6 @@ exports.contactFormEmail = async (req, res, next) => {
   }
 };
 
-
-
-exports.getAvailableProvider = async (req, res, next) => {
-  try {
-  //  const userTimezone =req.query.userTimezone
-  //  const userDateTime = moment.tz(appointmentDateTime,userTimezone).utc();
-  //  momentZone.tz(appointmentDateTime, userTimezone);
-  //  const utcDateTime = moment.utc(appointmentDateTime);
-   const providers=await getProviders()
-   console.log(req.user)
-   const appt=await appointmentUnpaidExist(req?.user?.sub,{
-    doctorId:{[Op.not]: null}
-   })
-
-  //  const free_provider=[]
-  //  //give two hour before and after appointment
-  // //  const appointmentStartTime = userDateTime.clone().toDate();
-  // //  const twoHoursAfter = userDateTime.clone().add(1, "hours").toDate();
-  // if(providers.length<1) return res.json(free_provider)
-  // for(let provider of providers){
-  //   const options={
-  //     where: {
-  //       doctorId: provider.id,
-  //       // appointmentDateTime: {
-  //       //   [Op.between]: [appointmentStartTime, twoHoursAfter]
-  //       // },
-  //     },
-  //   }
-  //   const overlappingAppointments = await getAppointmentsByFilter(options);
-  //   if(overlappingAppointments.length<1)free_provider.push(
-  //     {id:provider.id,first_name:provider.first_name,
-  //     last_name:provider.last_name})
-  // }
-   return res.json({providers,appt})
-  }
-  catch(err){
-   next(err)
-  }
-}
-exports.getProviderSchedule = async (req, res, next) => {
-  try {
-   const providerId = req.params.providerId;
-   const options={
-    where:{
-      doctorId: providerId,
-      paymentStatus:true
-    },
-    attributes:['appointmentDateTime']
-   }
-   const providerSchedule = await getAppointmentsByFilter(options);
-   return res.json({providerSchedule})
-  }
-  catch(err){
-   next(err)
-  }
-}
-
 exports.getAffilateCode = async (req, res, next) => {
   try {
     const user=await User.findOne({where:{id:req?.user?.sub}});
@@ -565,8 +502,8 @@ exports.getAffilateCode = async (req, res, next) => {
       return res.json({src:dataUrl,url:`${process.env.BASE_URL}/register?affiliatedBy=${user.affiliateLink}`});
     }
     const link=Date.now()
-    await User.update({affiliateLink:link},
-    {where:{id:req?.user?.sub}});
+    await User.update({affliateLink:link},
+    {where:{userId:req?.user?.sub}});
     const dataUrl=await QRCode.toDataURL(`${process.env.BASE_URL}/register?affiliatedBy=${link}`)
     return res.json({src:dataUrl,url:`${process.env.BASE_URL}/register?affiliatedBy=${user.affiliateLink}`});
   }
@@ -582,7 +519,7 @@ exports.getOtp = async (req, res, next) => {
     }
    const otp =await generateOtp(req?.user?.sub)
    const user=await User.findByPk(req?.user?.sub)
-   sendOtpEmail(otp,user.email)
+   await sendOtpEmail(otp,user.email)
    return res.json({otp});
   }
   catch(err){
@@ -596,15 +533,15 @@ exports.confirmOtp = async (req, res, next) => {
     const user=await User.findOne({where:{id:req?.user?.sub}});
    if(valid){
    let amount =await getAffiliatePayableAmount(req?.user?.sub)
-   amount=Number(amount)
+   //cash-out just 70% of the reward
+   amount=Number(amount)*0.7
    if(amount<20){
     handleError("not enough balane to withdraw",401)
     }
    const batchId=Math.random().toString(36).substring(9)
    const note='TestRxmd affiliate payout'
    const payout=await sendPayout(user.email,amount,note,batchId)
-   console.log(payout?.batch_header?.payout_batch_id)
-   await Affiliate.update({batchId:payout?.batch_header?.payout_batch_id,status:"pending"},
+   await Affliate.update({batchId:payout?.batch_header?.payout_batch_id,status:"pending"},
     {where:{affilatorId:req?.user?.sub,withdrawalType:"NA"}})
     return res.json({message:"payout success, will let you know with email when transaction done"});
    }
@@ -616,7 +553,7 @@ exports.confirmOtp = async (req, res, next) => {
 }
 exports.getUserAffiliateDetail = async (req, res, next) => {
   try {
-    const affilate_detail=await Affiliate.findAll({where:{affilatorId:req?.user?.sub},
+    const affilate_detail=await Affliate.findAll({where:{affilatorId:req?.user?.sub},
       include:['buyer']})
     return res.json({affilate_detail})
   }
@@ -624,28 +561,36 @@ exports.getUserAffiliateDetail = async (req, res, next) => {
    next(err)
   }
 }
-exports.getUserAffiliateRelation = async (req, res, next) => {
+//change in dev
+exports.create2FA = async (req, res, next) => {
   try {
-    const option={
-      attributes:['email','first_name','last_name'],
-      include:{
-      model:User,
-      as:'affiliate',
-      attributes:['email','first_name','last_name'],
-    }
-    }
-    const {affiliator_email}=req.query
-    if(affiliator_email)option.where={
-      email:affiliator_email
-    }
-    const user_affiliate=await User.findAll(option)
-    return res.json(user_affiliate)
+    const Otp=await get2faVerfication(1)
+    sendOtpEmail(Otp,"marufbelete9@gmail.com")
+    return res.json('success')
   }
   catch(err){
    next(err)
   }
 }
-
+//change in dev
+exports.verify2FA = async (req, res, next) => {
+  try {
+    const verify=await verify2faVerfication("066876",1)
+    if(!verify){
+      handleError("Wrong OTP please try again",403)
+    }
+    if(verify.delta===0)
+    {
+      return res.json({message:"successfully verified"})
+    }
+    else if(verify.delta<=-1){
+      handleError("OTP key entered too late",403)
+    }
+  }
+  catch(err){
+   next(err)
+  }
+}
 
 exports.adminDashboard = async (req, res, next) => {
   try {
@@ -654,14 +599,12 @@ exports.adminDashboard = async (req, res, next) => {
     };
     const products = await Product.findAll(options);
     const product_type=await Product.getAttributes().type.values;
-    const product_catagory=await Product.getAttributes().productCatagory.values;
     return res.render(path.join(__dirname, "..", "/views/pages/dashboard"),
-     { products,product_type,product_catagory });
+     { products,product_type });
   } catch (err) {
     next(err);
   }
 };
-
 exports.jotformWebhook = async (req, res, next) => {
   try {
     const { pretty } = req.body;

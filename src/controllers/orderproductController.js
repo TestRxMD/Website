@@ -43,23 +43,22 @@ exports.getOrderproductById = async (req, res, next) => {
 exports.editOrderproduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const {quantity}=req.body
     if (isUserAdmin(req)) {
       const updated_order_product = await Orderproduct.update(
-        { quantity },
+        { ...req.body },
         { where: { id: id } }
       );
       return res.json(updated_order_product);
     }
-    // const change = {};
-    // if (req.body.quantity) {
-    //   change.quantity = req.body.quantity;
-    // }
-    // const updated_order_product = await Orderproduct.update(
-    //   { ...change },
-    //   { where: { id: id, "$Order.userId$": req?.user?.sub } }
-    // );
-    // return res.json(updated_order_product);
+    const change = {};
+    if (req.body.quantity) {
+      change.quantity = req.body.quantity;
+    }
+    const updated_order_product = await Orderproduct.update(
+      { ...change },
+      { where: { id: id, "$Order.userId$": req?.user?.sub } }
+    );
+    return res.json(updated_order_product);
   } catch (err) {
     next(err);
   }
@@ -75,16 +74,16 @@ exports.deleteOrderproduct = async (req, res, next) => {
         message: "item deleted",
       });
     }
-    // await Orderproduct.destroy({
-    //   where: {
-    //     id,
-    //     "$Order.userId$": req?.user?.sub,
-    //   },
-    // });
-    // return res.json({
-    //   success: true,
-    //   message: "item deleted",
-    // });
+    await Orderproduct.destroy({
+      where: {
+        id,
+        "$Order.userId$": req?.user?.sub,
+      },
+    });
+    return res.json({
+      success: true,
+      message: "item deleted",
+    });
   } catch (err) {
     next(err);
   }

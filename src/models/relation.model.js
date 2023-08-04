@@ -3,15 +3,12 @@ const Orderproduct = require("./orderproduct");
 const Order = require("./orderModel");
 const User = require("./userModel");
 const Role = require("./roleModel");
-const Affiliate = require("./affiliateModel");
+const Affliate = require("./affiliateModel");
 const Subscription=require("./subscriptionModel")
 const PaymenInfo=require("./paymentInfoModel")
 const Tracking=require("./trackingModel")
-// const Patientinfo=require("./patientInfoModel")
+const Patientinfo=require("./patientInfoModel")
 const Appointment=require("./appointmentModel")
-const Fitness=require("./fitnessModel")
-const Meal=require("./mealModel");
-const SubscriptionPayment = require("./subscriptionPaymentDetailModel");
 
 const Relation = () => {
   //product to order
@@ -35,82 +32,50 @@ const Relation = () => {
   });
 
    // user as buyer-affiliate
-   User.hasMany(Affiliate,{
+   User.hasMany(Affliate,{
     foreignKey: 'buyerId',
     as: 'buyer'
   })
-  Affiliate.belongsTo(User,{
+  Affliate.belongsTo(User,{
     foreignKey: 'buyerId',
     as: 'buyer'
-  })
-   // user as patie with appoin
-   User.hasMany(Appointment,{
-    foreignKey: 'patientId',
-    as: 'patient'
-  })
-  Appointment.belongsTo(User,{
-    foreignKey: 'patientId',
-    as: 'patient'
-  })
-   // user as doc with appoin
-   User.hasMany(Appointment,{
-    foreignKey: 'doctorId',
-    as: 'doctor'
-  })
-  Appointment.belongsTo(User,{
-    foreignKey: 'doctorId',
-    as: 'doctor'
-  })
-   // product -appointment
-   Product.hasMany(Appointment,{
-    foreignKey: 'productId',
-  })
-  Appointment.belongsTo(Product,{
-    foreignKey: 'productId',
   })
    // user as buyer-affiliate
-  //  User.hasMany(Patientinfo,{
-  //   foreignKey: 'userId',
-  // })
-  // Patientinfo.belongsTo(User,{
-  //   foreignKey: 'userId',
-  // })
-   // user meal plan
-   User.hasMany(Meal,{
+   User.hasMany(Appointment,{
     foreignKey: 'userId',
   })
-  Meal.belongsTo(User,{
+  Appointment.belongsTo(User,{
     foreignKey: 'userId',
   })
-   // user fitness plan
-   User.hasMany(Fitness,{
+   // user as buyer-affiliate
+   User.hasMany(Patientinfo,{
     foreignKey: 'userId',
   })
-  Fitness.belongsTo(User,{
+  Patientinfo.belongsTo(User,{
     foreignKey: 'userId',
   })
    // product-patientinfo
-  //  Product.hasMany(Patientinfo,{
-  //   foreignKey: 'productId'
-  // })
-  // Patientinfo.belongsTo(Product,{
-  //   foreignKey: 'productId'
-  //   })
+   Product.hasMany(Patientinfo,{
+    foreignKey: 'productId'
+  })
+  Patientinfo.belongsTo(Product,{
+    foreignKey: 'productId'
+    })
   // user as affliator-affiliate
-  User.hasMany(Affiliate,{
+  User.hasMany(Affliate,{
     foreignKey: 'affilatorId',
     as: 'affilator'
   })
-  Affiliate.belongsTo(User,{
+  Affliate.belongsTo(User,{
     foreignKey: 'affilatorId',
     as: 'affilator'
   })
 
   // order-affiliate
-  Order.hasOne(Affiliate,{
+  Order.hasOne(Affliate,{
     foreignKey: 'orderId'
   })
-  Affiliate.belongsTo(Order,{
+  Affliate.belongsTo(Order,{
     foreignKey: 'orderId'
   })
   // user-paymentinfo
@@ -128,26 +93,13 @@ const Relation = () => {
     foreignKey: 'userId'
   })
    // user-product
-   Product.hasMany(Subscription,{
+   Product.hasOne(Subscription,{
     foreignKey: 'productId'
   })
   Subscription.belongsTo(Product,{
     foreignKey: 'productId'
   })
-   // paymentinfo subscription
-   PaymenInfo.hasMany(Subscription,{
-    foreignKey: 'paymentId'
-  })
-  Subscription.belongsTo(PaymenInfo,{
-    foreignKey: 'paymentId'
-  })
-   // paymentdetail subscription
-   Subscription.hasMany(SubscriptionPayment,{
-    foreignKey: 'subscriptionId'
-  })
-  SubscriptionPayment.belongsTo(Subscription,{
-    foreignKey: 'subscriptionId'
-  })
+
 
 //new.......
   //orderproduct to order
