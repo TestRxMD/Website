@@ -8,27 +8,19 @@ const sequelize = require("../models/index");
 const { handleError } = require("../helper/handleError");
 const { chargeCreditCard,createCustomerProfile,
   chargeCreditCardExistingUser} = require('../functions/handlePayment');
-const { sendEmail, sendMealPlanPurchaseEmail, sendFitnessPlanPurchaseEmail } = require("../helper/send_email");
+const { sendEmail } = require("../helper/send_email");
 const path = require('path');
-const Affiliate = require("../models/affiliateModel");
+const Affliate = require("../models/affiliateModel");
 const { Op } = require("sequelize");
-const Appointment = require("../models/appointmentModel");
-const { paySubscriptionFirstTimeCron } = require("./subscription");
-const Subscription = require("../models/subscriptionModel");
-const SubscriptionPayment = require("../models/subscriptionPaymentDetailModel");
-const { runCronOnAppointment } = require("./appointment.controller");
-const admin_email= ["rob@testrxmd.com","john@testrxmd.com"]
-// ["marufbelete9@gmail.com","beletemaruf@gmail.com"]
-// 
+
 exports.createOrder = async (req, res, next) => {
   const t = await sequelize.transaction();
   try {
-    const {payment_detail, product_ordered} = req.body;
+    const {payment_detail, product_ordered,apply_discount } = req.body;
     const user=await User.findByPk(req?.user?.sub)
     const {cardCode,expirtationDate,cardNumber,billingLastName,
       email,billingFirstName,address,city,state,zip,
       save_payment_info,use_exist_payment,customer_payment_profile_id}=payment_detail
-      if(product_ordered.length<1) handleError("please select one or more products",403)
       const allPaymentInfo=await PaymenInfo.findAll({where:{userId:req?.user?.sub}})
       if(allPaymentInfo.length<1 || !use_exist_payment){
       if(!cardCode||!expirtationDate||!cardNumber||!billingLastName||!
@@ -47,13 +39,11 @@ exports.createOrder = async (req, res, next) => {
     );
     let total_amount=0
     let is_appointment_exist=false
-    let is_meal_plan_exist=false
-    let is_fitness_plan_exist=false
     let is_renewal=false
     let product_names=[]
     let is_longterm_prodcut_exist=false
     let total_affiliate_amount=0
-    const is_commission_paid_before=await Affiliate.findOne({
+    const is_commission_paid_before=await Affliate.findOne({
       where:{
       affilatorId:user?.affiliatedBy,
       buyerId:req?.user?.sub,
@@ -62,22 +52,12 @@ exports.createOrder = async (req, res, next) => {
     }
   }
 })
-
+     console.log("cpaid before"+is_commission_paid_before)
     for(const prod of product_ordered) {
       const product = await Product.findByPk(prod?.productId);
-      product_names.push(product?.product_name)
-      if(product?.type=='product'){
-        is_appointment_exist=true
-      }
-      if(product?.type=='fitness plan'){
-        is_fitness_plan_exist=true
-      }
-      if(product?.type=='meal plan'){
-        is_meal_plan_exist=true
-      }
-      if(product?.type=='treatment'){
-        is_renewal=true
-      }
+      product_names.push(product.product_name)
+      if(product?.type=='product'){is_appointment_exist=true}
+      if(product?.type=='treatment'){is_renewal=true}
       total_amount=total_amount+(Number(prod?.quantity||1)*Number(product?.price))
       const order_product_create= {
         productId: prod?.productId,
@@ -95,67 +75,53 @@ exports.createOrder = async (req, res, next) => {
         order_product_create,
         { transaction: t }
       );
-  
       //check if he prev get commission for this user
-      // if(product.productCatagory==="long term" && user?.affiliatedBy && !is_commission_paid_before){
-      if(is_appointment_exist && user?.affiliatedBy && !is_commission_paid_before){
+      if(product.productCatagory==="long term" && user?.affiliatedBy && !is_commission_paid_before){
+        //get 10 percent of the long term therapy
         is_longterm_prodcut_exist=true
-        //$25 for first appointment of the fiiliate
-        total_affiliate_amount=25
+        total_affiliate_amount=50
       }
-  }
-    
+    }
   //check if the person was affliated and give commision
   //for the affliator
-  // console.log(is_meal_plan_exist,user?.mealPlan)
-  // con
-  if(is_meal_plan_exist&&user?.mealPlan){
-    handleError("meal plan already exist, please fill the form",403)
-  }
-  if(is_fitness_plan_exist&&user?.exercisePlan){
-    handleError("fitness plan already exist, please fill the form",403)
-  }
   if(is_longterm_prodcut_exist){
     const amount=total_affiliate_amount
-    await Affiliate.create({
+    await Affliate.create({
       amount:amount,
       affilatorId:user.affiliatedBy,
       buyerId:user.id,
       orderId:order.id
     },{transaction:t})
   }
-  // if(apply_discount)
-  // {
-  //   const discount_amount =await getAffiliatePayableAmount(req?.user?.sub)
-  //   console.log(discount_amount)
-  //   if((discount_amount)>(0.9*total_amount)){
-  //     let paid_from_affiliate=0.9*total_amount
-  //     total_amount=0.1*total_amount
-  //     await Affiliate.update({
-  //       status:"paid",withdrawalType:"discount"},
-  //     {where:{affilatorId:req?.user?.sub,withdrawalType:"NA"},transaction: t })
-  //     //create for rest value
-  //     const amount=(discount_amount-paid_from_affiliate)
-  //     if(amount>0){
-  //       await Affiliate.create({
-  //         amount:amount,
-  //         affilatorId:req?.user?.sub,
-  //         buyerId:req?.user?.sub,
-  //         orderId:order.id
-  //       },{transaction:t})
-  //     }
-  //   }
-  //   else{
-  //     total_amount=total_amount-(Number(discount_amount))
-  //     await Affiliate.update({
-  //       status:"paid",withdrawalType:"discount"},
-  //     {where:{affilatorId:req?.user?.sub,withdrawalType:"NA"},transaction: t })
-  //   }
-  // }
+  if(apply_discount)
+  {
+    const discount_amount =await getAffiliatePayableAmount(req?.user?.sub)
+    console.log(discount_amount)
+    if((discount_amount)>(0.9*total_amount)){
+      let paid_from_affiliate=0.9*total_amount
+      total_amount=0.1*total_amount
+      await Affliate.update({
+        status:"paid",withdrawalType:"discount"},
+      {where:{affilatorId:req?.user?.sub,withdrawalType:"NA"},transaction: t })
+      //create for rest value
+      const amount=(discount_amount-paid_from_affiliate)
+      if(amount>0){
+        await Affliate.create({
+          amount:amount,
+          affilatorId:req?.user?.sub,
+          buyerId:req?.user?.sub,
+          orderId:order.id
+        },{transaction:t})
+      }
+    }
+    else{
+      total_amount=total_amount-(Number(discount_amount))
+      await Affliate.update({
+        status:"paid",withdrawalType:"discount"},
+      {where:{affilatorId:req?.user?.sub,withdrawalType:"NA"},transaction: t })
+    }
+  }
     //update the user address info
-    const planInfo={}
-    if(is_meal_plan_exist){planInfo.mealPlan=true}
-    if(is_fitness_plan_exist){planInfo.exercisePlan=true}
     await User.update({
      address:address,
      city:city,
@@ -163,7 +129,6 @@ exports.createOrder = async (req, res, next) => {
      zip_code:zip,
      country:'USA',
      appointment:true,
-     ...planInfo,
      left_appointment:is_appointment_exist},
     {where:{id:req?.user?.sub},transaction: t })
     const payment_info={
@@ -188,6 +153,7 @@ exports.createOrder = async (req, res, next) => {
 
   let payment_response
   if(save_payment_info){
+    console.log("savep info")
     const {customerProfileId,customerPaymentProfileId}=await createCustomerProfile(payment_info)
     await PaymenInfo.create({
       userId:user.id,
@@ -195,23 +161,25 @@ exports.createOrder = async (req, res, next) => {
       userProfilePaymentId:customerPaymentProfileId,
       cardLastDigit:`**********${String(cardNumber).slice(-3)}`
     }, { transaction: t })
-      payment_response=await chargeCreditCardExistingUser(total_amount,customerProfileId,customerPaymentProfileId)
-    
+    payment_response=await chargeCreditCardExistingUser(total_amount,customerProfileId,customerPaymentProfileId)
   }
   else if(use_exist_payment && allPaymentInfo?.length>0){
     const paymentInfo=await PaymenInfo.findOne({where:{userProfilePaymentId:customer_payment_profile_id}})
-    if(!paymentInfo){
-      handleError("payment method not found",403)
-    }
+  if(paymentInfo){
     payment_response=await chargeCreditCardExistingUser(total_amount,paymentInfo.userProfileId,customer_payment_profile_id)
-}
-else{
-      payment_response=await chargeCreditCard(payment_info)
   }
+  else{
+    handleError("payment method not found",403)
+  }
+}
+  else{
+      payment_response=await chargeCreditCard(payment_info)
+    }
  
     order.transId=payment_response.transId
     order.total_paid_amount=total_amount.toFixed(2)
     await order.save({ transaction: t })
+   console.log(payment_response.transId,total_amount.toFixed(2))
     const filePath = path.join(__dirname,"..","..",'public', 'images','testrxmd.gif');
     const mailOptions = {
       from: process.env.EMAIL,
@@ -239,28 +207,8 @@ else{
       cid: 'unique@kreata.ee' //same cid value as in the html img src
     }]
     };
-    
-    // if(is_appointment_exist){
-    // const appt_id= await Appointment.findOne({where:{paymentStatus:false,
-    //   patientId:req?.user?.sub}}) 
-    // await Appointment.update({
-    //   paymentStatus:true
-    // },{where:{paymentStatus:false,
-    //   patientId:req?.user?.sub},transaction:t,returning: true})
-    //   console.log(appt_id.id)
-    //   console.log('reached herrr=============!!!!!!!!!!!!!!!!!!')
-    //   await runCronOnAppointment(appt_id.id,{transaction:t})
-    // }
+    is_appointment_exist&& sendEmail(mailOptions)
     await t.commit();
-    if(is_appointment_exist){
-    sendEmail(mailOptions).then(r=>r).catch(e=>e);
-    }
-    if(is_meal_plan_exist){
-      await sendMealPlanPurchaseEmail(user,product_names,admin_email).then(r=>r).catch(e=>e)
-    }
-    if(is_fitness_plan_exist){
-      sendFitnessPlanPurchaseEmail(user,product_names,admin_email).then(r=>r).catch(e=>e)
-    }
     if(is_renewal) {
       const mailOptionsRenewal = {
         from: process.env.EMAIL,
@@ -290,7 +238,8 @@ else{
 
       const mailOptionsAdmin = {
         from: process.env.EMAIL,
-        to: admin_email,
+        to: ["marufbelete9@gmail.com","beletemaruf@gmail.com"],
+        // to: ["rob@testrxmd.com","john@testrxmd.com"],
         subject: "TestRxMD Appointment Order Confirmation",
         html: `
         <div style="margin:auto; max-width:650px; background-color:#C2E7FF">
@@ -334,151 +283,8 @@ else{
       sendEmail(mailOptionsRenewal).then(r=>r).catch(e=>e);
       sendEmail(mailOptionsAdmin).then(r=>r).catch(e=>e)
   }
-    return res.status(201).json({order,is_appointment_exist,product_names,is_fitness_plan_exist,is_meal_plan_exist});
+    return res.status(201).json({order,is_appointment_exist,product_names});
   } catch (err) {
-    console.log(err)
-    await t.rollback();
-    next(err);
-  }
-  
-};
-exports.createOrderSubscription = async (req, res, next) => {
-  const t = await sequelize.transaction();
-  try {
-    const {payment_detail, product_ordered,
-    subscriptionPeriod } = req.body;
-    const user=await User.findByPk(req?.user?.sub)
-    const {cardCode,expirtationDate,cardNumber,billingLastName,
-      email,billingFirstName,address,city,state,zip,
-      use_exist_payment,customer_payment_profile_id}=payment_detail
-      if(!product_ordered) handleError("please select one or more products",403)
-      const allPaymentInfo=await PaymenInfo.findAll({where:{userId:req?.user?.sub}})
-      if(allPaymentInfo.length<1 || !use_exist_payment){
-      if(!cardCode||!expirtationDate||!cardNumber||!billingLastName||!
-        email||!billingFirstName||!address||!city||!state||!zip){
-          handleError("Please fill all field", 400);
-        }
-      }
-    if (!(await isIntakeFormComplted(req))) {
-      handleError("Please complete the registration form", 400);
-    }
-    let total_amount=0
-    let is_meal_plan_exist=false
-    let is_fitness_plan_exist=false
-    let product_names=[]
-
-      const product = await Product.findByPk(product_ordered?.productId);
-      product_names.push(product?.product_name)
-      if(product?.type=='fitness plan'){
-        is_fitness_plan_exist=true
-      }
-      if(product?.type=='meal plan'){
-        is_meal_plan_exist=true
-      }
-      total_amount=total_amount+(Number(product_ordered?.quantity||1)*Number(product?.price))
-  
-
-  if(is_meal_plan_exist&&user?.mealPlan){
-    handleError("meal plan already exist, please fill the form",403)
-  }
-  if(is_fitness_plan_exist&&user?.exercisePlan){
-    handleError("fitness plan already exist, please fill the form",403)
-  }  
-    //update the user address info
-    const planInfo={}
-    if(is_meal_plan_exist){planInfo.mealPlan=true}
-    if(is_fitness_plan_exist){planInfo.exercisePlan=true}
-    await User.update({
-     address:address,
-     city:city,
-     state:state,
-     zip_code:zip,
-     country:'USA',
-     appointment:true,
-     ...planInfo
-    },
-    {where:{id:req?.user?.sub},transaction: t })
-    const payment_info={
-     card_detail:{
-     cardNumber:cardNumber,
-     expirtationDate:expirtationDate?.
-      replace('/', ''),
-     cardCode:cardCode,
-     },
-     billing_detail:{
-     firstName:billingFirstName,
-     lastName:billingLastName,
-     email:email,
-     address:address,
-     city:city,
-     state:state,
-     zip:zip,
-     country:'USA'
-     }
-  }
-  let subscription_mult
-  let subscription_payment
-  if(subscriptionPeriod==3){subscription_mult=0.9}
-  if(subscriptionPeriod==6){subscription_mult=0.8}
-  if(subscriptionPeriod==12){subscription_mult=0.7}
-  const subscriptionAmount=total_amount*subscription_mult
-  let payment_response
-  if(use_exist_payment && allPaymentInfo?.length>0){
-    const paymentInfo=await PaymenInfo.findOne({where:{userProfilePaymentId:customer_payment_profile_id}})
-    if(!paymentInfo){
-      handleError("payment method not found",403)
-    }
-        const subscription=await Subscription.create({
-         period:subscriptionPeriod,
-         paymentAmount:subscriptionAmount,
-         paymentId:paymentInfo.id,
-         userId:user.id,
-         productId:product.id
-       },{transaction:t})
-       subscription_payment=await SubscriptionPayment.create({
-        subscriptionId:subscription.id
-       },{transaction:t})
-      //  await scheduleSubscription(subscription,paymentInfo.userProfileId,customer_payment_profile_id,{transaction:t})
-       payment_response=await chargeCreditCardExistingUser(subscriptionAmount,paymentInfo.userProfileId,customer_payment_profile_id)
-    }
-  else{
-    const {customerProfileId,customerPaymentProfileId}=await createCustomerProfile(payment_info)
-    const paymentInfo=await PaymenInfo.create({
-      userId:user.id,
-      userProfileId:customerProfileId,
-      userProfilePaymentId:customerPaymentProfileId,
-      cardLastDigit:`**********${String(cardNumber).slice(-3)}`
-    }, { transaction: t })
-      
-      const subscription=await Subscription.create({
-        period:subscriptionPeriod,
-        paymentAmount:subscriptionAmount,
-        paymentId:paymentInfo.id,
-        userId:user.id,
-        productId:product.id
-      },{transaction:t})
-        subscription_payment=await SubscriptionPayment.create({
-        subscriptionId:subscription.id
-       },{transaction:t})
-      // await scheduleSubscription(subscription,customerProfileId,customerPaymentProfileId,{transaction:t})
-      payment_response=await chargeCreditCardExistingUser(subscriptionAmount,customerProfileId,customerPaymentProfileId)
-  }
-
-    subscription_payment.transId=payment_response.transId
-    await subscription_payment.save({ transaction: t })
-
-    await t.commit();
-    paySubscriptionFirstTimeCron().then(e=>e).catch(e=>e)
-    if(is_meal_plan_exist){
-      sendMealPlanPurchaseEmail(user,product_names,admin_email).then(r=>r).catch(e=>e)
-    }
-    if(is_fitness_plan_exist){
-      sendFitnessPlanPurchaseEmail(user,product_names,admin_email).then(r=>r).catch(e=>e)
-    }
-    return res.status(201).json({product_names,is_fitness_plan_exist,is_meal_plan_exist});
-
-  } catch (err) {
-    console.log(err)
     await t.rollback();
     next(err);
   }
@@ -560,16 +366,15 @@ exports.getMyOrder = async (req, res, next) => {
 exports.editOrder = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const {order_date,delivery_date}=req.body
     if (isUserAdmin(req)) {
       const updated_order = await Order.update(
-        { order_date,delivery_date },
+        { ...req.body },
         { where: { id: id } }
       );
       return res.json(updated_order);
     }
     const updated_order = await Order.update(
-      {  order_date,delivery_date },
+      { ...req.body },
       { where: { id: id, userId: req?.user?.sub } }
     );
     return res.json(updated_order);

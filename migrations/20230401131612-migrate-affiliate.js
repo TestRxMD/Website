@@ -15,6 +15,7 @@ module.exports = {
         'productCatagory',
         {
           type: Sequelize.DataTypes.ENUM("long term", "short term","other"),
+          // defaultValue: "short term"
         },
         { transaction }
       );
@@ -59,10 +60,6 @@ module.exports = {
           field: 'id'
         }
       },{transaction});
-    
-      await queryInterface.changeColumn('products', 'type', {
-        type: Sequelize.ENUM('product', 'treatment','meal plan', 'fitness plan') 
-      },{transaction});
       await transaction.commit();
 
     } catch (err) {
@@ -81,10 +78,6 @@ module.exports = {
       await queryInterface.removeColumn('users', 'exercisePlan', { transaction });
       await queryInterface.removeColumn('users', 'mealPlan', { transaction });
       await queryInterface.removeColumn('products', 'productCatagory', { transaction });
-     await queryInterface.changeColumn('products', 'type', {
-      type: Sequelize.ENUM('product', 'treatment'),
-      defaultValue: 'product',
-    }, { transaction });
       await transaction.commit();
     } 
     catch (err) {
@@ -94,18 +87,3 @@ module.exports = {
   }
 };
 
-
-
-// await queryInterface.addColumn('products', 'temp_type', {
-//   type: Sequelize.ENUM('product', 'treatment', 'meal plan', 'fitness plan'),
-//   defaultValue: 'product',
-//   after: 'type', // Add the column after the original 'type' column
-// });
-  
-// // Step 3: Drop the original column
-// await queryInterface.removeColumn('products', 'type', { transaction });
-
-// // Step 4: Rename the temporary column
-// await queryInterface.renameColumn('products', 'temp_type', 'type', {
-//   transaction,
-// });

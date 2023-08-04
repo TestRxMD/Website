@@ -1,5 +1,4 @@
 const User = require("../models/userModel");
-const Role=require("../models/roleModel")
 const PaymenInfo=require("../models/paymentInfoModel")
 const Subscription=require("../models/subscriptionModel")
 const jwt = require("jsonwebtoken");
@@ -7,10 +6,7 @@ const bcrypt = require("bcryptjs");
 const speakeasy = require('speakeasy');
 
 const {createSubscriptionFromCustomerProfile}=require('../functions/handlePayment');
-const Affiliate = require("../models/affiliateModel");
-const Product = require("../models/productModel");
-const Appointment = require("../models/appointmentModel");
-const Fitness = require("../models/fitnessModel");
+const Affliate = require("../models/affiliateModel");
 const isEmailExist = async (email) => {
   const user = await User.findOne({
     where: { email: email },
@@ -38,7 +34,7 @@ const get2faVerfication = async (userId) => {
   const otp = speakeasy.totp({
     secret: secret,
     encoding: 'base32',
-    window: 6 //in 3 minute 30s*6
+    window: 180 //in second
   });
   return otp
 
@@ -49,12 +45,12 @@ const verify2faVerfication = async (otp,userId) => {
     secret: user.twoFaSecret,
     encoding: 'base32',
     token: otp, 
-    window: 6
+    window: 300 
   });
   return isValid
 };
 const deemAffiliate=async(batch_id)=>{
-  await Affiliate.update({withdrawalType:"cash",status:"paid"},
+  await Affliate.update({withdrawalType:"cash",status:"paid"},
     {where:{batchId:batch_id}})
 }
 const generateOtp=async(userId)=>{
@@ -62,7 +58,8 @@ const generateOtp=async(userId)=>{
   return otp
 }
 const getAffiliatePayableAmount=async(userId)=>{
-   const result = await Affiliate.sum('amount', {
+  console.log(userId)
+   const result = await Affliate.sum('amount', {
     where: { affilatorId:userId, withdrawalType:"NA", status:"not paid"}
   });
   //  await Affliate.findOne({
@@ -71,6 +68,8 @@ const getAffiliatePayableAmount=async(userId)=>{
   //   ],
   //   where: { affilatorId:userId, isDeemed: false }
   // });
+  console.log(result);
+  console.log("total paid")
   return result
 }
 //check which data to sign
@@ -78,13 +77,7 @@ const issueToken = async function (id, role,email,rememberme, key,expirey) {
   const token = jwt.sign({ sub: id, role,email,rememberme }, key, { expiresIn: expirey });
   return token;
 };
-const getProviders= async()=>{
-  const provider=await User.findAll({include:[{
-    model:Role,
-    where:{role:"provider"}
-   }]})
-   return provider
-}
+
 
 const isTokenValid = async function (token,secret) {
   const user = jwt.verify(token,secret, (err, user) => {
@@ -147,41 +140,7 @@ const createSubscription = async (req) => {
 }
   return null
 };
-const getUser=async(id)=>{
-  const user=User.findByPk(id)
-  return user
-}
-const getProductType=async(options={})=>{
-  const product=await Product.findAll({
-    ...options,where:{type:'product'}});
-  return product
-}
-const getTreatmentType=async(options={})=>{
-  const treatment=await Product.findAll({
-    ...options,where:{type:'treatment'}});
-  return treatment
-}
-const getPlanType=async(options={})=>{
-  const treatment=await Product.findAll({
-    ...options});
-  return treatment
-}
-const getAppointmentsByFilter=async(options)=>{
-  const appointments=await Appointment.findAll(options)
-  return appointments
-}
-const getAppointmentByFilter=async(options)=>{
-  const appointment=await Appointment.findOne(options)
-  return appointment
-}
-const appointmentUnpaidExist = async(sub,option={}) => {
-  const appointment=await Appointment.findOne({where:{
-    paymentStatus:false,
-    patientId:sub,
-    ...option
-  }})
-  return appointment;
-};
+
 
 module.exports = {
   isEmailExist,
@@ -198,14 +157,5 @@ module.exports = {
   verify2faVerfication,
   getAffiliatePayableAmount,
   deemAffiliate,
-  generateOtp,
-  getUser,
-  getProductType,
-  getTreatmentType,
-  getPlanType,
-  getProviders,
-  getAppointmentsByFilter,
-  getAppointmentByFilter,
-  appointmentUnpaidExist,
-  
+  generateOtp
 };

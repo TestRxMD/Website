@@ -1,9 +1,9 @@
 const express=require('express')
 const route=express.Router()
-const {chatCompletion}=require('../controllers/chatController')
+const {createCompletion}=require('../chatGPT/createCompletion')
 const { authenticateJWT } = require("../middleware/auth.middleware");
 route.post('/chatcompliation',
 // authenticateJWT,
-chatCompletion)
+createCompletion)
 
 module.exports=route

@@ -6,7 +6,6 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const jsdom = require("jsdom");
-// const helmet=require("helmet")
 const { JSDOM } = jsdom;
 // const { window } = new JSDOM();
 const { document } = new JSDOM("").window;
@@ -22,30 +21,24 @@ const order_product_route = require("./routes/orderproductRoutes");
 const chat_route = require("./routes/gptRoute");
 const product_route = require("./routes/productRoutes");
 const payment_info_route = require("./routes/paymentInfoRoutes")
-// const patient_info_route = require("./routes/patientInfoRoutes");
-// const appointment_route=require("./routes/appointment")
-// const meal_route = require("./routes/mealRoute");
-// const fitness_route=require("./routes/fitnessPlan")
+const patient_info = require("./routes/patientInfoRoutes");
 // const shipping_route = require("./routes/shippingRoutes");
 // const brand_route = require("./routes/brandRoutes");
 // const category_route = require("./routes/categoryRoutes");
 const { addInitialProduct } = require('./helper/initial_product')
 const { googlePassport } = require("./auth/google");
 const Relation = require("./models/relation.model");
-const { runCronOnAppointments } = require("./controllers/appointment.controller");
-const { paySubscriptionCron } = require("./controllers/subscription");
+
 process.env["NODE_CONFIG_DIR"] = path.join(__dirname, "/config");
 var corsOptions = {
   origin: [
     "http://localhost:8081",
     "https://rxmdsite-production.up.railway.app",
-    "https://shielded-citadel-34904.herokuapp.com",
     "http://localhost:7000"],
 };
 
 app.use(cors(corsOptions));
-// app.use(helmet());
-// app.use(logger("dev"));
+app.use(logger("dev"));
 app.use(passport.initialize());
 googlePassport(passport);
 
@@ -78,10 +71,7 @@ app.use(chat_route);
 app.use(order_product_route);
 app.use(order_route);
 app.use(payment_info_route);
-// app.use(patient_info_route);
-// app.use(appointment_route);
-// app.use(meal_route);
-// app.use(fitness_route);
+app.use(patient_info);
 app.use(view_route);
 
 // UNUSED SHOP ROUTES FOR LATER
@@ -118,18 +108,10 @@ sequelize
             role: "user",
           });
         }
-        const isProvider = await Role.findOne({ where: { role: "provider" } });
-        if (!isProvider) {
-          await Role.create({
-            role: "provider",
-          });
-        }
         return;
       };
       populateDB();
       addInitialProduct();
-      runCronOnAppointments();
-      paySubscriptionCron();
       console.log(`Listening on port ${port}`);
     });
   })
