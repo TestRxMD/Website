@@ -250,7 +250,7 @@
                   class="ajaxload-popup text-success">
                   <u>Registration Form</u></a> before purchasing the Labwork &amp; Telehealth Consult ***</h5>
             </div>
-            <form id="checkout-form" action="/authorizeNet" method="post">
+            <form id="checkout-form" action="https://hipaa.jotform.com/212587273457161?token=<%=token%>" method="post">
               <div class="row mt-30">
                 <div class="col-md-12 mt-30">
                   <h3>Your order</h3>
@@ -284,13 +284,14 @@
                     </tbody>
                   </table>
                   <label id="apply_discount_p" for="applyDiscountCheckbox">
-                                      <!-- tolltip -->
-                      <span flow="right" tooltip="You can only get 90% of max discount of product you buy, if you have more you can use next time">
-                        <i class="fas fa-question-circle" ></i></span>                    
+                    <!-- tolltip -->
+                    <span flow="right"
+                      tooltip="You can only get 90% of max discount of product you buy, if you have more you can use next time">
+                      <i class="fas fa-question-circle"></i></span>
                     Apply My Discount
                     <input style="font-size: 25px;" type="checkbox" id="applyDiscountCheckbox" value="true">
                   </label>
-                    
+
 
                   <div class="d-none text-center" id="select-product-error">
                     <h5 id="select-product-error-text">Please select one or more product</h5>
@@ -298,15 +299,16 @@
                 </div>
 
 
-                <div id="check_exist_payment" class="d-none">
+                <!-- <div id="check_exist_payment" class="d-none">
                   <h2>Select a Payment Card</h2>
-                <div id="payment_card_list">
+                  <div id="payment_card_list">
+                  </div>
+                  <label for="otherPaymentCheckbox">use other payment
+                    <input style="font-size: 25px;" type="checkbox" id="otherPaymentCheckbox" name="otherPayment"
+                      value="true">
+                  </label>
                 </div>
-                <label for="otherPaymentCheckbox">use other payment
-                  <input style="font-size: 25px;" type="checkbox" id="otherPaymentCheckbox" name="otherPayment" value="true">
-                </label>
-                </div>
-              
+
 
                 <div class="col-md-12 mt-60" id="use_new_payment">
                   <div class="card payment-method">
@@ -385,9 +387,9 @@
                             <div class="card-header py-3 text-center">
                               <h4 class="mb-0">Billing Address</h4>
                             </div>
-                            <div id="billingAddress" class="card-body">
-                              <!-- 2 column grid layout with text inputs for the first and last names -->
-                              <div class="row mb-4">
+                            <div id="billingAddress" class="card-body"> -->
+                <!-- 2 column grid layout with text inputs for the first and last names -->
+                <!-- <div class="row mb-4">
                                 <div class="col">
                                   <div class="form-outline">
                                     <input type="text" id="checkout-form-firstname" class="form-control"
@@ -402,23 +404,23 @@
                                     <label class="form-label" for="checkout-form-lastname">Last name</label>
                                   </div>
                                 </div>
-                              </div>
+                              </div> -->
 
-                              <!-- Email input -->
-                              <div class="form-outline mb-4">
+                <!-- Email input -->
+                <!-- <div class="form-outline mb-4">
                                 <input type="email" id="checkout-form-email" class="form-control"
                                   value="<%=billing_info?.email%>" />
                                 <label class="form-label" for="checkout-form-email">Email</label>
-                              </div>
+                              </div> -->
 
-                              <!-- Address1 input -->
-                              <!-- <div class="form-outline mb-4">
+                <!-- Address1 input -->
+                <!-- <div class="form-outline mb-4">
                                 <input type="text" id="checkout-form-address" class="form-control" />
                                 <label class="form-label" for="checkout-form-address">Address Line 1</label>
                               </div> -->
 
-                              <!-- Address2 input -->
-                              <div class="row mb-4">
+                <!-- Address2 input -->
+                <!-- <div class="row mb-4">
                                 <div class="col">
                                   <div class="form-outline">
                                     <input type="text" id="checkout-form-address" class="form-control"
@@ -558,10 +560,11 @@
                                   </div>
                                 </div>
                                 <div>
-                                <label for="saveCardCheckbox">Save Card Info
-                                  <input style="font-size: 25px;" type="checkbox" id="saveCardCheckbox" name="savePayment" value="true">
-                                </label>
-                              </div>
+                                  <label for="saveCardCheckbox">Save Card Info
+                                    <input style="font-size: 25px;" type="checkbox" id="saveCardCheckbox"
+                                      name="savePayment" value="true">
+                                  </label>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -569,7 +572,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
                 <div id="complete-order-error" class="d-none text-center"></div>
                 <div class="panel-footer">
                   <div class="row text-center py-4">
