@@ -145,7 +145,9 @@ router.get("/podcast", async function (req, res) {
     const videoUrl = await generatePresignedUrl(podcast_latest.video_key);
     podcast_latest.url=videoUrl
   }
-  res.render(path.join(__dirname, "..", "/views/pages/podcast"),{podcast:podcast_latest,podcasts});
+  console.log({podcast:podcast_latest,podcasts})
+
+  return res.render(path.join(__dirname, "..", "/views/pages/podcast"),{podcast:podcast_latest,podcasts});
 });
 
 //  UNUSED STORE ROUTES FOR USE LATER

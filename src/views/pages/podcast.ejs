@@ -158,6 +158,7 @@
                 <!-- Left column - currently playing video -->
                 <div class="col-md-8">
                   <div class="video-container" style="text-align: center;">
+                    <% if (podcast && podcast.url) { %>
                       <video id="main-video" controls style="width: 100%; max-width: 700px;aspect-ratio: 16 / 9;">
                           <source id="main-video-source" src="<%= podcast.url%>" data-key_main="<%= podcast.video_key %>">
                           Your browser does not support the video tag.
@@ -165,6 +166,10 @@
                       <p class="text-title">
                         <h4 id="main-video-title"><%= podcast.title %> <span>@<%=new Date(podcast.createdAt).toDateString() %></span></h4>
                     </p>
+                    <% } else { %>
+                      <h4>No podcast available to display at the moment.</h4>
+                    <% } %>
+
                   </div>
               </div>
           <!-- <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWXnexX7CktaI?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe> -->
@@ -173,6 +178,7 @@
                 <!-- Right column - playlist (with scroll) -->
                 <div class="col-md-4">
                   <div class="playlist">
+                    <% if (podcasts && podcasts.length > 0) { %>
                       <% podcasts.forEach(function(podcast) { %>
                           <a href="javascript:void(0)" class="playlist-item" data-key="<%= podcast.video_key %>">
                               <div class="playlist-thumbnail">
@@ -185,6 +191,9 @@
                               </div>
                           </a>
                       <% }); %>
+                      <% } else { %>
+                        <p>No podcasts available in the playlist.</p>
+                      <% } %>
                   </div>
                 </div>
               </div>
