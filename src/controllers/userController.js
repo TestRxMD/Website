@@ -23,7 +23,8 @@ const {
   generateOtp,
   getProviders,
   getAppointmentsByFilter,
-  appointmentUnpaidExist
+  appointmentUnpaidExist,
+  getDynamicPageInfo
 } = require("../helper/user");
 const { handleError } = require("../helper/handleError");
 const { validationResult } = require("express-validator");
@@ -660,8 +661,9 @@ exports.adminDashboard = async (req, res, next) => {
     const products = await Product.findAll(options);
     const product_type=await Product.getAttributes().type.values;
     const product_catagory=await Product.getAttributes().productCatagory.values;
+    const page_info=await getDynamicPageInfo();
     return res.render(path.join(__dirname, "..", "/views/pages/dashboard"),
-     { products,product_type,product_catagory });
+     { products,product_type,product_catagory,page_info });
   } catch (err) {
     next(err);
   }

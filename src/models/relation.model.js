@@ -13,6 +13,7 @@ const Fitness=require("./fitnessModel")
 const Meal=require("./mealModel");
 const SubscriptionPayment = require("./subscriptionPaymentDetailModel");
 const Podcast=require("./podcastModel");
+const DynamicPage=require("./dynamicPageModel");
 
 
 const Relation = () => {

@@ -91,11 +91,9 @@
                   <div class="row">
                     <div class="col-lg-7">
                       <div class="content-box section-typo-light">
-                        <h1 class="title mt-0" data-tm-font-size="4rem">Testosterone Therapy</h1>
-                        <h3 class="sub-title mb-0">Specializing in testosterone replacement therapy to optimize
-                          performance, strength, focus and endurance</h3>
-                        <p class="paragraph">We offer a wide range of care with a primary focus in: TRT/HRT, Weight
-                          Management, Energy solutions and ED Treatment</p>
+                        <h1 class="title mt-0" data-tm-font-size="4rem"><%= page_info.landing_page?.split('&%')[0]%></h1>
+                        <h3 class="sub-title mb-0"><%= page_info.landing_page?.split('&%')[1]%></h3>
+                        <p class="paragraph"><%= page_info.landing_page?.split('&%')[2]%></p>
                         <div class="btn-wrapper">
                           <a href="/services" class="btn btn-outline-light mr-10">Learn More</a>
                           <a href="#" class="btn btn-theme-colored2">Contact Us</a>
@@ -120,23 +118,23 @@
                   <div class="tm-element-holder tm-fullwidth open-hours p-30 border-10px border-dark">
                     <div class="tm-element-holder-wrapper">
                       <div class="tm-element-holder-content">
-                        <h5 class="mt-0"><i class="far fa-clock text-theme-colored1"></i> Clinic Hours</h5>
+                        <h5 class="mt-0"><i class="far fa-clock text-theme-colored1"></i> <%= page_info.working_hour?.split('&%')[0]%></h5>
                         <ul class="tm-sc-opening-hours tm-sc-opening-hours-compressed opening-hours border-light">
                           <li class="clearfix">
-                            <span>Monday - Friday</span>
-                            <div class="value">8:00am - 5:00pm EST</div>
+                            <span><%= page_info.working_hour?.split('&%')[1]%></span>
+                            <div class="value"><%= page_info.working_hour?.split('&%')[2]%></div>
                           </li>
                           <li class="clearfix">
-                            <span>Saturday</span>
-                            <div class="value">Closed</div>
+                            <span><%= page_info.working_hour?.split('&%')[3]%></span>
+                            <div class="value"><%= page_info.working_hour?.split('&%')[4]%></div>
                           </li>
                           <li class="clearfix">
-                            <span>Sunday</span>
-                            <div class="value">Closed</div>
+                            <span><%= page_info.working_hour?.split('&%')[5]%></span>
+                            <div class="value"><%= page_info.working_hour?.split('&%')[6]%></div>
                           </li>
                         </ul>
-                        <h5><i class="fas fa-id-card text-theme-colored1"></i> Online Appointments Available!</h5>
-                        <p>Can't make it to the clinic? We can see you online. Click below to get started</p>
+                        <h5><i class="fas fa-id-card text-theme-colored1"></i> <%= page_info.working_hour?.split('&%')[7]%></h5>
+                        <p><%= page_info.working_hour?.split('&%')[8]%></p>
                         <div class="tm-sc-button text-center"> <a href="/checkout" target="_self"
                             class="btn btn-theme-colored1 btn-sm">Get Started </a></div>
                       </div>
@@ -144,12 +142,9 @@
                   </div>
                 </div>
                 <div class="mb-md-30 col-sm-12 col-lg-4 col-md-6">
-                  <h2 class="mt-5">TestRxMD</h2>
-                  <p><em>TestRx MD is dedicated to helping you find the best version of yourself. We are here to help
-                      discover that new you through our featured services.</em></p>
-                  <p>If you have a busy schedule and can't make it in to the office, no problem. We can do your
-                    appointment online! Our team can do a tele-health consultation to talk about your goals and discuss
-                    your therapy options.</p>
+                  <h2 class="mt-5"><%= page_info.about_page?.split('&%')[0]%></h2>
+                  <p><em><%= page_info.about_page?.split('&%')[1]%></em></p>
+                  <p><%= page_info.about_page?.split('&%')[2]%></p>
                 </div>
 
                 <div class="col-sm-12 col-lg-4 hidden-md-down">
@@ -166,8 +161,7 @@
           <div class="container pt-50 pb-20">
             <div class="row">
               <div class="col-md-8">
-                <p class="lead text-center">Watch our latest podcast videos on the most exciting topics 
-                  and discussions. Click the link below to explore our full collection and never miss an episode!
+                <p class="lead text-center"><%=page_info.podcast?.split('&%')[0]%>
                 </p>
                 <!-- <p class="lead text-center">Become a TestRxMD affiliate and get paid anytime someone signs up using your
                   QR code and then makes their first appointment! Each person
@@ -224,10 +218,8 @@
             <div class="section-content">
               <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-7">
-                  <h2>Our Services</h2>
-                  <p>We offer a wide range of care with a primary focus in: TRT/HRT, Weight Management, Nootropics,
-                    Peptide Therapy,
-                    and ED Treatment</p>
+                  <h2><%=page_info.service?.split('&%')[0]%></h2>
+                  <p><%=page_info.service?.split('&%')[1]%></p>
                   <div class="row mb-10">
                     <div class="col-sm-6">
                       <div
@@ -236,12 +228,9 @@
                           <a class="icon icon-type-font-icon icon-gray mb-20"> <i
                               class="flaticon-medical-ambulance14"></i> </a>
                           <div class="icon-text">
-                            <h5 class="icon-box-title"> Hormone Therapy</h5>
+                            <h5 class="icon-box-title"> <%=page_info.service?.split('&%')[2]%></h5>
                             <div class="content">
-                              <p>We will customize a hormone treatment plan based on your individual needs. We will
-                                actively monitor your hormone levels and make changes as needed to regain the vitality
-                                of
-                                your youth.</p>
+                              <p><%=page_info.service?.split('&%')[3]%></p>
                             </div>
                           </div>
                           <div class="clearfix"></div>
@@ -255,12 +244,9 @@
                           <a class="icon icon-type-font-icon icon-gray mb-20"> <i class="flaticon-medical-illness"></i>
                           </a>
                           <div class="icon-text">
-                            <h5 class="icon-box-title">Testosterone Therapy</h5>
+                            <h5 class="icon-box-title"><%=page_info.service?.split('&%')[4]%></h5>
                             <div class="content">
-                              <p>We provide a personalized complete testosterone program based upon your goals. Whether
-                                you want to be more performance oriented, or just want to have energy and libido like
-                                you
-                                used to, we can get you there!</p>
+                              <p><%=page_info.service?.split('&%')[5]%></p>
                             </div>
                           </div>
                           <div class="clearfix"></div>
@@ -276,11 +262,9 @@
                           <a class="icon icon-type-font-icon icon-gray mb-20"> <i
                               class="flaticon-medical-stethoscope10"></i> </a>
                           <div class="icon-text">
-                            <h5 class="icon-box-title">ED Treatment</h5>
+                            <h5 class="icon-box-title"><%=page_info.service?.split('&%')[6]%></h5>
                             <div class="content">
-                              <p>We know this isn't the most fun topic to discuss. We have a variety of solutions for
-                                both
-                                male and female issues. Make an appointment today to see what your options are!</p>
+                              <p><%=page_info.service?.split('&%')[7]%></p>
                             </div>
                           </div>
                           <div class="clearfix"></div>
@@ -294,11 +278,9 @@
                           <a class="icon icon-type-font-icon icon-gray mb-20"> <i class="flaticon-medical-balls"></i>
                           </a>
                           <div class="icon-text">
-                            <h5 class="icon-box-title">Weight Loss &amp; Weight Control</h5>
+                            <h5 class="icon-box-title"><%=page_info.service?.split('&%')[8]%></h5>
                             <div class="content">
-                              <p>Our Medical Weight Loss program provides an effective and simple plan to help you
-                                easily
-                                achieve your weight loss goals and maintain a healthy weight.</p>
+                              <p><%=page_info.service?.split('&%')[9]%></p>
                             </div>
                           </div>
                           <div class="clearfix"></div>
@@ -317,19 +299,18 @@
                       <h2 class="accordion-header" id="heading503">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                           data-bs-target="#collapse501" aria-expanded="false" aria-controls="collapse501">
-                          <strong>What is covered in our ALL-INCLUSIVE therapies?</strong>
+                          <strong><%=page_info.qa?.split('&%')[0]%></strong>
                         </button>
                       </h2>
                       <div id="collapse501" class="accordion-collapse collapse show" aria-labelledby="heading501"
                         data-bs-parent="#accordion500">
                         <div class="accordion-body">
-                          <strong>After the initial lab draw ($150), the following will be included in your monthly
-                              fee:</strong>
+                          <strong><%=page_info.qa?.split('&%')[1]%></strong>
                           <ul>
-                            <li>😷 - Doctor Consults/Physical Exams</li>
-                            <li>🩸 - Quarterly Labs (more if needed)</li>
-                            <li>💊 - Cost of Medication (and any supplies needed to administer)</li>
-                            <li>📦 - Cost of expedited shipping to your door!</li>
+                            <li>😷 - <%=page_info.qa?.split('&%')[2]%></li>
+                            <li>🩸 - <%=page_info.qa?.split('&%')[3]%></li>
+                            <li>💊 - <%=page_info.qa?.split('&%')[4]%></li>
+                            <li>📦 - <%=page_info.qa?.split('&%')[5]%></li>
                           </ul>
                         </div>
                       </div>
@@ -339,29 +320,19 @@
                       <h2 class="accordion-header" id="heading502">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                           data-bs-target="#collapse502" aria-expanded="false" aria-controls="collapse502">
-                          <strong>Do you accept insurance?</strong>
+                          <strong><%=page_info.qa?.split('&%')[6]%></strong>
                         </button>
                       </h2>
                       <div id="collapse502" class="accordion-collapse collapse" aria-labelledby="heading502"
                         data-bs-parent="#accordion500">
                         <div class="accordion-body">
-                          <strong>We don’t accept insurance for a couple of reasons:</strong>
+                          <strong><%=page_info.qa?.split('&%')[7]%></strong>
                           <ol type="i">
-                            <li>In our experience less than 10-15% of clients would have levels low enough
-                              for insurance to cover their therapy. If they do decide to cover the cost of your therapy,
-                              and subsequent lab
-                              results come back normal/high, you would be at risk of losing
-                              coverage of your therapy altogether.</li>
-                            <li>By not taking insurance we are able to treat the client as we see fit. We don’t
-                              have insurance companies dictating how we are able to practice medicine. We truly believe
-                              this
-                              brings a much higher level of care to the client. I encourage you to see what you think.
+                            <li><%=page_info.qa?.split('&%')[8]%></li>
+                            <li><%=page_info.qa?.split('&%')[9]%>
                             </li>
                           </ol>
-                          <p class="mt-3 mb--10">We do accept HSA/Flex spending cards. This is a feature that a lot of
-                            clients like to
-                            take
-                            advantage of. Keeps more money in your bank account.</p>
+                          <p class="mt-3 mb--10"><%=page_info.qa?.split('&%')[10]%></p>
                         </div>
                       </div>
                     </div>
@@ -370,40 +341,26 @@
                       <h2 class="accordion-header" id="heading503">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                           data-bs-target="#collapse503" aria-expanded="false" aria-controls="collapse503">
-                          <strong>How long does it take to get my meds?</strong>
+                          <strong><%=page_info.qa?.split('&%')[11]%></strong>
                         </button>
                       </h2>
                       <div id="collapse503" class="accordion-collapse collapse" aria-labelledby="heading503"
                         data-bs-parent="#accordion500">
                         <div class="accordion-body">
                           <ol type="I">
-                            <li> <strong>If you need labs drawn:</strong></li>
+                            <li> <strong><%=page_info.qa?.split('&%')[12]%></strong></li>
                             <ol type="a">
-                              <li>After the lab draw is conducted, we schedule a follow-up appointment for a week out.
-                                This
-                                gives the lab plenty of time to post your results. Normally the results come back after
-                                3-4 days, but we build in a cushion for any
-                                delays.
-                                If
-                                your labs get posted earlier, you’ll have access through our patient portal. You will
-                                receive
-                                an email with a link to your results.</li>
+                              <li><%=page_info.qa?.split('&%')[13]%>.</li>
 
-                              <li>After the follow-up appointment any medication deemed necessary will be sent in to our
-                                mail-order compounding pharmacy. We use expedited (FedEx 2nd Day) shipping (no sig req..
-                                if
-                                you would like to require a signature.. just ask).</li>
-                              <li>From start to finish you are looking at around 10 days until meds
-                                arrive at your door in a FedEx box.</li>
+                              <li><%=page_info.qa?.split('&%')[14]%></li>
+                              <li><%=page_info.qa?.split('&%')[15]%></li>
                             </ol>
                             <li class="mt-3">
-                              <strong>If you already have current labs (within the last 3 months):</strong>
+                              <strong><%=page_info.qa?.split('&%')[16]%></strong>
                             </li>
                             <ol type="a">
-                              <li>You get to essentially skip ahead to part b in the previous section.</li>
-                              <li>From start to finish,
-                                after your consult, you would be looking at around 3 days (1 day to process
-                                and 2-day shipping).</li>
+                              <li><%=page_info.qa?.split('&%')[17]%></li>
+                              <li><%=page_info.qa?.split('&%')[18]%></li>
                             </ol>
                           </ol>
                         </div>
@@ -414,27 +371,13 @@
                       <h2 class="accordion-header" id="heading504">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse"
                           data-bs-target="#collapse504" aria-expanded="true" aria-controls="collapse504">
-                          <strong>How much does it cost?</strong>
+                          <strong><%=page_info.qa?.split('&%')[19]%></strong>
                         </button>
                       </h2>
                       <div id="collapse504" class="accordion-collapse collapse " aria-labelledby="heading504"
                         data-bs-parent="#accordion500">
                         <div class="accordion-body">
-                          We charge $150 for
-                            initial bloodwork/labs (we can use labs that have been
-                            drawn in the last 3 months). Therapies vary in cost but start at <% const
-                              minPrice=treatment.reduce((min, product)=> {
-                              if (product.price < min) { return product.price; } return min; }, Infinity); 
-                              const minTRTPrice=treatment.reduce((min, product)=> {
-                                if (product.product_name.toLowerCase().includes('trt')&&product.price < min) { return
-                                  product.price; } return min; }, Infinity);
-                                   %>
-                                  $<%= minPrice %>
-                                    /month (TRT specifically
-                                    starts at $200/month). All subsequent lab draws/consults would be
-                                      included in your monthly
-                                      rate for
-                                      whatever therapy you choose.
+                          <%=page_info.qa?.split('&%')[20]%>
                         </div>
                       </div>
                     </div>
@@ -465,10 +408,7 @@
                           <div class="testimonial-inner">
                             <div class="testimonial-text-holder">
                               <div class="author-text">
-                                I love these guys, they are spectacular. John is very knowledgeable, and they have
-                                helped me tremendously. I'm back at the top of my game and honestly feel better than I
-                                have in
-                                years. So glad I found this place!
+                                <%=page_info.rating?.split('&%')[0]%>
                               </div>
                               <div class="star-rating">
                                 <span style="width: 100%"></span>
@@ -482,7 +422,7 @@
                                 </div>
                               </div>
                               <div class="testimonial-author-info-holder">
-                                <h5 class="name">Brandon Hinton</h5>
+                                <h5 class="name"><%=page_info.rating?.split('&%')[1]%></h5>
                               </div>
                             </div>
                           </div>
@@ -494,9 +434,7 @@
                           <div class="testimonial-inner">
                             <div class="testimonial-text-holder">
                               <div class="author-text">
-                                If you guys out there are looking for testosterone replacement therapy, look no
-                                further! These guys are awesome, helpful and go the extra mile for their patients! Can't
-                                suggest this place enough.
+                                <%=page_info.rating?.split('&%')[2]%>
                               </div>
                               <div class="star-rating">
                                 <span style="width: 100%"></span>
@@ -510,7 +448,7 @@
                                 </div>
                               </div>
                               <div class="testimonial-author-info-holder">
-                                <h5 class="name">Jimmy Leinbach</h5>
+                                <h5 class="name"><%=page_info.rating?.split('&%')[3]%></h5>
                               </div>
                             </div>
                           </div>
@@ -522,10 +460,7 @@
                           <div class="testimonial-inner">
                             <div class="testimonial-text-holder">
                               <div class="author-text">
-                                The products at TestRxMD are excellent and have made a huge difference for me!
-                                So happy I took the leap and
-                                gave this place a shot. Looking for cutting-edge Nootropics or Testosterone?
-                                This is the place to call.
+                                <%=page_info.rating?.split('&%')[4]%>
                               </div>
                               <div class="star-rating">
                                 <span style="width: 84%"></span>
@@ -539,7 +474,7 @@
                                 </div>
                               </div>
                               <div class="testimonial-author-info-holder">
-                                <h5 class="name">Jacob Briggs</h5>
+                                <h5 class="name"><%=page_info.rating?.split('&%')[5]%></h5>
                               </div>
                             </div>
                           </div>
@@ -551,9 +486,7 @@
                           <div class="testimonial-inner">
                             <div class="testimonial-text-holder">
                               <div class="author-text">
-                                Great service, super friendly, and everything works as described. These guys really know
-                                their stuff. Been doing TrT and
-                                Sermorelin and my body hasn't felt this good in years!!!
+                                <%=page_info.rating?.split('&%')[6]%>
                               </div>
                               <div class="star-rating">
                                 <span style="width: 96%"></span>
@@ -567,7 +500,7 @@
                                 </div>
                               </div>
                               <div class="testimonial-author-info-holder">
-                                <h5 class="name">Roger Finnigan</h5>
+                                <h5 class="name"><%=page_info.rating?.split('&%')[7]%></h5>
                               </div>
                             </div>
                           </div>
@@ -622,9 +555,8 @@
                                 <div class="overlay-shade shade-white"></div>
                               </div>
                               <div class="staff-content">
-                                <h5 class="name">TRT/HRT:</h5>
-                                <div class="speciality">TRT: STARTING AT $<%= minTRTPrice %>/MONTH<br>
-                                    HRT: INDIVIDUALIZED PLANS</div>
+                                <h5 class="name"><%=page_info.treatment?.split('&%')[0]%></h5>
+                                <div class="speciality"><%=page_info.treatment?.split('&%')[1]%></div>
                               </div>
                             </div>
                           </div>
@@ -642,8 +574,8 @@
                                 <div class="overlay-shade shade-white"></div>
                               </div>
                               <div class="staff-content">
-                                <h5 class="name">WEIGHT-LOSS:</h5>
-                                <div class="speciality">STIMULANT-BASED AND NON-STIMULANT BASED THERAPIES</div>
+                                <h5 class="name"><%=page_info.treatment?.split('&%')[2]%></h5>
+                                <div class="speciality"><%=page_info.treatment?.split('&%')[3]%></div>
                               </div>
                             </div>
                           </div>
@@ -661,8 +593,8 @@
                                 <div class="overlay-shade shade-white"></div>
                               </div>
                               <div class="staff-content">
-                                <h5 class="name">GH Peptide Therapy</h5>
-                                <div class="speciality">SERMORELIN, IPAMORELIN, CJC&dash;1295
+                                <h5 class="name"><%=page_info.treatment?.split('&%')[4]%></h5>
+                                <div class="speciality"><%=page_info.treatment?.split('&%')[5]%>
                                 </div>
                               </div>
                             </div>
@@ -681,8 +613,8 @@
                                 <div class="overlay-shade shade-white"></div>
                               </div>
                               <div class="staff-content">
-                                <h5 class="name">NOOTROPICS</h5>
-                                <div class="speciality">WE OFFER BOTH SEMAX AND SELANK NASAL SPRAY
+                                <h5 class="name"><%=page_info.treatment?.split('&%')[6]%></h5>
+                                <div class="speciality"><%=page_info.treatment?.split('&%')[7]%>
                                 </div>
                                 <ul class="contact-info">
                               </div>
@@ -702,8 +634,8 @@
                                 <div class="overlay-shade shade-white"></div>
                               </div>
                               <div class="staff-content">
-                                <h5 class="name">ED TREATMENT</h5>
-                                <div class="speciality">TADALAFIL, SILDENAFIL, PT&dash;141, OXYTOCIN, ETC.</div>
+                                <h5 class="name"><%=page_info.treatment?.split('&%')[8]%></h5>
+                                <div class="speciality"><%=page_info.treatment?.split('&%')[9]%></div>
                                 <ul class="contact-info">
                               </div>
                             </div>
@@ -722,9 +654,9 @@
                                 <div class="overlay-shade shade-white"></div>
                               </div>
                               <div class="staff-content">
-                                <h5 class="name">LABWORK</h5>
-                                <div class="speciality">WE OFFER PER&dash;BASIS LAB DRAWS $<%=products.find(e=>
-                                    e?.product_name=="Labwork & Telehealth Consult")?.price%></div>
+                                <h5 class="name"><%=page_info.treatment?.split('&%')[10]%></h5>
+                                <div class="speciality"> <%=page_info.treatment?.split('&%')[11]%>
+                                </div>
                                 <ul class="contact-info">
                               </div>
                             </div>

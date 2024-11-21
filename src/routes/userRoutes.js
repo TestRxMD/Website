@@ -40,6 +40,7 @@ const { authenticateJWT } = require("../middleware/auth.middleware");
 const { issueGoogleToken } = require("../auth/google");
 const { authAdmin } = require("../middleware/role.middleware");
 const multer = require("multer");
+const { editPageInfo } = require("../controllers/dynamicPageController");
 const multipart = multer();
 
 router.post("/register", registerValidate(), registerUser, errorHandler);
@@ -67,6 +68,7 @@ router.post("/contactform", contactFormValidate(), contactFormEmail, errorHandle
 // router.post("/jotformwebhook", multipart.array(), jotformWebhook, errorHandler);
 // router.post("/vcitawebhook", appointmentCreatedWebhook, errorHandler);
 router.get("/dashboard", authenticateJWT, authAdmin, adminDashboard, errorHandler);
+router.put("/homepage", authenticateJWT, authAdmin, editPageInfo, errorHandler);
 //google auth
 router.get("/auth/google",
   passport.authenticate("google", {

@@ -5,6 +5,7 @@ const Subscription=require("../models/subscriptionModel")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const speakeasy = require('speakeasy');
+const dynamicPage = require("../models/dynamicPageModel");
 
 const {createSubscriptionFromCustomerProfile}=require('../functions/handlePayment');
 const Affiliate = require("../models/affiliateModel");
@@ -12,6 +13,7 @@ const Product = require("../models/productModel");
 const Appointment = require("../models/appointmentModel");
 const Fitness = require("../models/fitnessModel");
 const { Op } = require("sequelize");
+const { handleError } = require("./handleError");
 const isEmailExist = async (email) => {
   const user = await User.findOne({
     where: { email: email },
@@ -162,6 +164,15 @@ const getTreatmentType=async(options={})=>{
     ...options,where:{type:'treatment'}});
   return treatment
 }
+const getDynamicPageInfo = async () => {
+  try {
+    const page_info = await dynamicPage.findOne();
+    return page_info;
+  } catch (err) {
+
+    handleError('server error', 500);
+  }
+};
 const getProductAndTreatmentType=async(options={})=>{
   const treatment=await Product.findAll({
     ...options,where:{type:{[Op.or]:['product','treatment']}}});
@@ -214,5 +225,6 @@ module.exports = {
   getAppointmentsByFilter,
   getAppointmentByFilter,
   appointmentUnpaidExist,
+  getDynamicPageInfo
   
 };

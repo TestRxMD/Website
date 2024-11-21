@@ -6,7 +6,7 @@ const { Op } = require('sequelize')
 // const { checkAppointmentLeft } = require("../middleware/role.middleware");
 // module.exports = (app) => {
 const path = require("path");
-const { getUser, getProductType, getTreatmentType, appointmentUnpaidExist, getPlanType } = require("../helper/user");
+const { getUser, getProductType, getTreatmentType, appointmentUnpaidExist, getPlanType, getDynamicPageInfo } = require("../helper/user");
 const Appointment = require("../models/appointmentModel");
 const { checkAppointmentLeft } = require("../middleware/role.middleware");
 const { generatePresignedUrl } = require("../helper/s3-file");
@@ -20,7 +20,8 @@ router.get("/", async function (req, res) {
   };
   const treatment = await getTreatmentType(options)
   const products = await getProductType(options)
-  res.render(path.join(__dirname, "..", "/views/pages/index"), { treatment, products });
+  const page_info=await getDynamicPageInfo()
+  res.render(path.join(__dirname, "..", "/views/pages/index"), { treatment, products,page_info });
 });
 
 router.get("/success", authenticateJWT,checkAppointmentLeft,getAppointment, errorHandler);

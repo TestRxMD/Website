@@ -99,11 +99,238 @@
         <div class="container-fluid p-5">
           <!-- Page header -->
           <h1 class="my-5 text-center display-1">Admin Dashboard</h1>
+        <!-- home page management -->
+<div class="card mb-4">
+  <h2 class="mb-4 my-5 text-center">Manage Home Page</h2>
+  <div class="card-header">
+    <h3>Edit Home Page</h3>
+  </div>
+
+  <div class="accordion" id="homePageAccordion">
+
+    <!-- Page One -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingPageOne">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePageOne" aria-expanded="true" aria-controls="collapsePageOne">
+          Landing
+        </button>
+      </h2>
+      <div id="collapsePageOne" class="accordion-collapse collapse show" aria-labelledby="headingPageOne" data-bs-parent="#homePageAccordion">
+        <div class="accordion-body">
+          <div class="mb-3" id="contentSections_page_one">
+            <% for(let page of page_info?.landing_page?.split('&%')) { %>
+              <textarea class="form-control" rows="3"><%= page %></textarea>
+            <% } %>
+          </div>
+          
+          <div class="text-center d-none" id="update_page_one_notify"></div>
+          <button name='update' id='update-page-one' type="button" class="btn btn-sm btn-dark">
+            <span id="update_page_one_text">Update</span>
+            <span id="update_page_one_text_spin" class="d-none">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Two -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingPageTwo">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePageTwo" aria-expanded="false" aria-controls="collapsePageTwo">
+          About
+        </button>
+      </h2>
+      <div id="collapsePageTwo" class="accordion-collapse collapse" aria-labelledby="headingPageTwo" data-bs-parent="#homePageAccordion">
+        <div class="accordion-body">
+          <div class="mb-3" id="contentSections_page_two">
+            <% for(let page of page_info?.about_page?.split('&%')) { %>
+              <textarea class="form-control" rows="3"><%= page %></textarea>
+            <% } %>
+          </div>
+
+          <div class="text-center d-none" id="update_page_two_notify"></div>
+          <button name='update' id='update-page-two' type="button" class="btn btn-sm btn-dark">
+            <span id="update_page_two_text">Update</span>
+            <span id="update_page_two_text_spin" class="d-none">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Working Hours -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingWorkingHours">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWorkingHours" aria-expanded="false" aria-controls="collapseWorkingHours">
+          Working Hours
+        </button>
+      </h2>
+      <div id="collapseWorkingHours" class="accordion-collapse collapse" aria-labelledby="headingWorkingHours" data-bs-parent="#homePageAccordion">
+        <div class="accordion-body">
+          <div class="mb-3" id="contentSections_working_hour">
+            <% for(let page of page_info?.working_hour?.split('&%')) { %>
+              <textarea class="form-control" rows="3"><%= page %></textarea>
+            <% } %>
+          </div>
+
+          <div class="text-center d-none" id="update_working_hour_notify"></div>
+          <button name='update' id='update-working-hour' type="button" class="btn btn-sm btn-dark">
+            <span id="update_working_hour_text">Update</span>
+            <span id="update_working_hour_text_spin" class="d-none">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Podcast -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingPodcast">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePodcast" aria-expanded="false" aria-controls="collapsePodcast">
+          Podcast
+        </button>
+      </h2>
+      <div id="collapsePodcast" class="accordion-collapse collapse" aria-labelledby="headingPodcast" data-bs-parent="#homePageAccordion">
+        <div class="accordion-body">
+          <div class="mb-3" id="contentSections_podcast">
+            <% for(let page of page_info?.podcast?.split('&%')) { %>
+              <textarea class="form-control" rows="3"><%= page %></textarea>
+            <% } %>
+          </div>
+
+          <div class="text-center d-none" id="update_podcast_notify"></div>
+          <button name='update' id='update-podcast' type="button" class="btn btn-sm btn-dark">
+            <span id="update_podcast_text">Update</span>
+            <span id="update_podcast_text_spin" class="d-none">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingServices">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseServices" aria-expanded="false" aria-controls="collapseServices">
+          Services
+        </button>
+      </h2>
+      <div id="collapseServices" class="accordion-collapse collapse" aria-labelledby="headingServices" data-bs-parent="#homePageAccordion">
+        <div class="accordion-body">
+          <div class="mb-3" id="contentSections_service">
+            <% for(let page of page_info?.service?.split('&%')) { %>
+              <textarea class="form-control" rows="3"><%= page %></textarea>
+            <% } %>
+          </div>
+
+          <div class="text-center d-none" id="update_service_notify"></div>
+          <button name='update' id='update-service' type="button" class="btn btn-sm btn-dark">
+            <span id="update_service_text">Update</span>
+            <span id="update_service_text_spin" class="d-none">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q&A -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingQA">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQA" aria-expanded="false" aria-controls="collapseQA">
+          Q&A
+        </button>
+      </h2>
+      <div id="collapseQA" class="accordion-collapse collapse" aria-labelledby="headingQA" data-bs-parent="#homePageAccordion">
+        <div class="accordion-body">
+          <div class="mb-3" id="contentSections_qa">
+            <% for(let page of page_info?.qa?.split('&%')) { %>
+              <textarea class="form-control" rows="3"><%= page %></textarea>
+            <% } %>
+          </div>
+
+          <div class="text-center d-none" id="update_qa_notify"></div>
+          <button name='update' id='update-qa' type="button" class="btn btn-sm btn-dark">
+            <span id="update_qa_text">Update</span>
+            <span id="update_qa_text_spin" class="d-none">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rating -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingRating">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRating" aria-expanded="false" aria-controls="collapseRating">
+          Rating
+        </button>
+      </h2>
+      <div id="collapseRating" class="accordion-collapse collapse" aria-labelledby="headingRating" data-bs-parent="#homePageAccordion">
+        <div class="accordion-body">
+          <div class="mb-3" id="contentSections_rating">
+            <% for(let page of page_info?.rating?.split('&%')) { %>
+              <textarea class="form-control" rows="3"><%= page %></textarea>
+            <% } %>
+          </div>
+
+          <div class="text-center d-none" id="update_rating_notify"></div>
+          <button name='update' id='update-rating' type="button" class="btn btn-sm btn-dark">
+            <span id="update_rating_text">Update</span>
+            <span id="update_rating_text_spin" class="d-none">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popular Treatments -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTreatments">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTreatments" aria-expanded="false" aria-controls="collapseTreatments">
+          Popular Treatments
+        </button>
+      </h2>
+      <div id="collapseTreatments" class="accordion-collapse collapse" aria-labelledby="headingTreatments" data-bs-parent="#homePageAccordion">
+        <div class="accordion-body">
+          <div class="mb-3" id="contentSections_treatment">
+            <% for(let page of page_info?.treatment?.split('&%')) { %>
+              <textarea class="form-control" rows="3"><%= page %></textarea>
+            <% } %>
+          </div>
+
+          <div class="text-center d-none" id="update_treatment_notify"></div>
+          <button name='update' id='update-treatment' type="button" class="btn btn-sm btn-dark">
+            <span id="update_treatment_text">Update</span>
+            <span id="update_treatment_text_spin" class="d-none">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
           <!-- Product management section -->
-          <h2 class="mb-4 text-center">Product Management</h2>
-
           <div class="card mb-4">
+            <h2 class="mb-4 text-center">Product Management</h2>
             <div class="card-header">
               <h3>Edit Product</h3>
             </div>
@@ -238,8 +465,8 @@
           </div>
 
           <!-- User management section -->
-          <h2 class="mb-4 mt-5 text-center">User Management</h2>
           <div class="card mb-4">
+            <h2 class="mb-4 mt-5 text-center">User Management</h2>
             <div class="card-header">
               <h3>Edit Users</h3>
             </div>
@@ -478,8 +705,9 @@
         </div>
 
         <!-- Order management section -->
-        <h2 class="mb-4 my-5 text-center">Order Management</h2>
+
         <div class="card mb-4">
+          <h2 class="mb-4 my-5 text-center">Order Management</h2>
           <div class="card-header">
             <h3>View Orders</h3>
           </div>
@@ -560,8 +788,8 @@
 
 
         <!-- Order management section -->
-        <h2 class="mb-4 my-5 text-center">Subscription Order Management</h2>
         <div class="card mb-4">
+          <h2 class="mb-4 my-5 text-center">Subscription Order Management</h2>
           <div class="card-header">
             <h3>View Subscription Orders</h3>
           </div>
@@ -609,3 +837,5 @@
 </body>
 
 </html>
+
+

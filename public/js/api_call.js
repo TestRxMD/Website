@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // const base_url = "http://localhost:7000";
-  const base_url = "https://www.testrxmd.com"
-  // const base_url = "https://test-test-8e04.up.railway.app"
+  // const base_url = "https://www.testrxmd.com"
+  const base_url = "https://test-test-8e04.up.railway.app"
   // const base_url = "https://rxmdsite-production.up.railway.app";
   const new_url = window?.location?.search;
 
@@ -2071,6 +2071,320 @@ if (window.location.pathname === '/dashboard') {
       }
   });
 }
+
+$('#update-page-one').click(function () {
+  const updatedSections = [];
+  $('#contentSections_page_one textarea').each(function () {
+    updatedSections.push($(this).val().trim());
+  });
+
+  const updatedContent = updatedSections.join('&%'); // Ensure &% is preserved
+  $("#update_page_one_text").addClass("d-none");
+  $("#update_page_one_text_spin").removeClass("d-none");
+  $.ajax({
+    url: '/homepage',
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify({ landing_page: updatedContent }),
+    success: function () {
+      $("#update_page_one_notify")
+      .text("content updated successfully")
+      .removeClass("d-none alert alert-danger")
+      .addClass("alert alert-primary");
+      setTimeout(function () {
+        $("#update_page_one_notify").addClass("d-none");
+      }, 3000);
+      $("#update_page_one_text").removeClass("d-none");
+      $("#update_page_one_text_spin").addClass("d-none");
+    },
+    error: function () {
+      $("#update_page_one_notify")
+      .text("something went wrong, please try again")
+      .removeClass("d-none alert alert-primary")
+      .addClass("alert alert-danger");
+    setTimeout(function () {
+      $("#update_page_one_notify").addClass("d-none");
+    }, 3000);
+    $("#update_page_one_text").removeClass("d-none");
+    $("#update_page_one_text_spin").addClass("d-none");
+    }
+  });
+});
+
+$('#update-page-two').click(function () {
+  const updatedSections = [];
+  $('#contentSections_page_two textarea').each(function () {
+    updatedSections.push($(this).val().trim());
+  });
+
+  const updatedContent = updatedSections.join('&%'); // Ensure &% is preserved
+  $("#update_page_two_text").addClass("d-none");
+  $("#update_page_two_text_spin").removeClass("d-none");
+  $.ajax({
+    url: '/homepage',
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify({about_page: updatedContent }),
+    success: function () {
+      $("#update_page_two_notify")
+      .text("content updated successfully")
+      .removeClass("d-none alert alert-danger")
+      .addClass("alert alert-primary");
+      setTimeout(function () {
+        $("#update_page_two_notify").addClass("d-none");
+      }, 3000);
+      $("#update_page_two_text").removeClass("d-none");
+      $("#update_page_two_text_spin").addClass("d-none");    
+    },
+    error: function () {
+      $("#update_page_two_notify")
+      .text("something went wrong, please try again")
+      .removeClass("d-none alert alert-primary")
+      .addClass("alert alert-danger");
+    setTimeout(function () {
+      $("#update_page_two_notify").addClass("d-none");
+    }, 3000);
+    $("#update_page_two_text").removeClass("d-none");
+    $("#update_page_two_text_spin").addClass("d-none");
+    }
+  });
+});
+
+$('#update-working-hour').click(function () {
+  const updatedSections = [];
+  $('#contentSections_working_hour textarea').each(function () {
+    updatedSections.push($(this).val().trim());
+  });
+
+  const updatedContent = updatedSections.join('&%'); // Ensure &% is preserved
+  $("#update_working_hour_text").addClass("d-none");
+  $("#update_working_hour_text_spin").removeClass("d-none");
+  $.ajax({
+    url: '/homepage',
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify({ working_hour: updatedContent }),
+    success: function () {
+      $("#update_working_hour_notify")
+      .text("content updated successfully")
+      .removeClass("d-none alert alert-danger")
+      .addClass("alert alert-primary");
+      setTimeout(function () {
+        $("#update_working_hour_notify").addClass("d-none");
+      }, 3000);
+      $("#update_working_hour_text").removeClass("d-none");
+      $("#update_working_hour_text_spin").addClass("d-none"); 
+    },
+    error: function () {
+      $("#update_working_hour_notify")
+      .text("something went wrong, please try again")
+      .removeClass("d-none alert alert-primary")
+      .addClass("alert alert-danger");
+    setTimeout(function () {
+      $("#update_working_hour_notify").addClass("d-none");
+    }, 3000);
+    $("#update_working_hour_text").removeClass("d-none");
+    $("#update_working_hour_text_spin").addClass("d-none");
+    }
+  });
+});
+
+$('#update-podcast').click(function () {
+  const updatedSections = [];
+  $('#contentSections_podcast textarea').each(function () {
+    updatedSections.push($(this).val().trim());
+  });
+
+  const updatedContent = updatedSections.join('&%'); // Ensure &% is preserved
+  $("#update_podcast_text").addClass("d-none");
+  $("#update_podcast_text_spin").removeClass("d-none");
+  $.ajax({
+    url: '/homepage',
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify({ podcast: updatedContent }),
+    success: function () {
+      $("#update_podcast_notify")
+      .text("content updated successfully")
+      .removeClass("d-none alert alert-danger")
+      .addClass("alert alert-primary");
+      setTimeout(function () {
+        $("#update_podcast_notify").addClass("d-none");
+      }, 3000);
+      $("#update_podcast_text").removeClass("d-none");
+      $("#update_podcast_text_spin").addClass("d-none"); 
+    },
+    error: function () {
+      $("#update_podcast_notify")
+      .text("something went wrong, please try again")
+      .removeClass("d-none alert alert-primary")
+      .addClass("alert alert-danger");
+    setTimeout(function () {
+      $("#update_podcast_notify").addClass("d-none");
+    }, 3000);
+    $("#update_podcast_text").removeClass("d-none");
+    $("#update_podcast_text_spin").addClass("d-none");
+    }
+  });
+});
+
+$('#update-service').click(function () {
+  const updatedSections = [];
+  $('#contentSections_service textarea').each(function () {
+    updatedSections.push($(this).val().trim());
+  });
+
+  const updatedContent = updatedSections.join('&%'); // Ensure &% is preserved
+  $("#update_service_text").addClass("d-none");
+  $("#update_service_text_spin").removeClass("d-none");
+  $.ajax({
+    url: '/homepage',
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify({ service: updatedContent }),
+    success: function () {
+      $("#update_service_notify")
+      .text("content updated successfully")
+      .removeClass("d-none alert alert-danger")
+      .addClass("alert alert-primary");
+      setTimeout(function () {
+        $("#update_service_notify").addClass("d-none");
+      }, 3000);
+      $("#update_service_text").removeClass("d-none");
+      $("#update_service_text_spin").addClass("d-none"); 
+    },
+    error: function () {
+      $("#update_service_notify")
+      .text("something went wrong, please try again")
+      .removeClass("d-none alert alert-primary")
+      .addClass("alert alert-danger");
+    setTimeout(function () {
+      $("#update_service_notify").addClass("d-none");
+    }, 3000);
+    $("#update_service_text").removeClass("d-none");
+    $("#update_service_text_spin").addClass("d-none");
+    }
+  });
+});
+
+$('#update-qa').click(function () {
+  const updatedSections = [];
+  $('#contentSections_qa textarea').each(function () {
+    updatedSections.push($(this).val().trim());
+  });
+
+  const updatedContent = updatedSections.join('&%'); // Ensure &% is preserved
+  $("#update_qa_text").addClass("d-none");
+  $("#update_qa_text_spin").removeClass("d-none");
+  $.ajax({
+    url: '/homepage',
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify({ qa: updatedContent }),
+    success: function () {
+      $("#update_qa_notify")
+      .text("content updated successfully")
+      .removeClass("d-none alert alert-danger")
+      .addClass("alert alert-primary");
+      setTimeout(function () {
+        $("#update_qa_notify").addClass("d-none");
+      }, 3000);
+      $("#update_qa_text").removeClass("d-none");
+      $("#update_qa_text_spin").addClass("d-none"); 
+    },
+    error: function () {
+      $("#update_qa_notify")
+      .text("something went wrong, please try again")
+      .removeClass("d-none alert alert-primary")
+      .addClass("alert alert-danger");
+    setTimeout(function () {
+      $("#update_qa_notify").addClass("d-none");
+    }, 3000);
+    $("#update_qa_text").removeClass("d-none");
+    $("#update_qa_text_spin").addClass("d-none");
+    }
+  });
+});
+
+$('#update-rating').click(function () {
+  const updatedSections = [];
+  $('#contentSections_rating textarea').each(function () {
+    updatedSections.push($(this).val().trim());
+  });
+
+  const updatedContent = updatedSections.join('&%'); // Ensure &% is preserved
+  $("#update_rating_text").addClass("d-none");
+  $("#update_rating_text_spin").removeClass("d-none");
+  $.ajax({
+    url: '/homepage',
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify({ rating: updatedContent }),
+    success: function () {
+      $("#update_rating_notify")
+      .text("content updated successfully")
+      .removeClass("d-none alert alert-danger")
+      .addClass("alert alert-primary");
+      setTimeout(function () {
+        $("#update_rating_notify").addClass("d-none");
+      }, 3000);
+      $("#update_rating_text").removeClass("d-none");
+      $("#update_rating_text_spin").addClass("d-none"); 
+    },
+    error: function () {
+      $("#update_rating_notify")
+      .text("something went wrong, please try again")
+      .removeClass("d-none alert alert-primary")
+      .addClass("alert alert-danger");
+    setTimeout(function () {
+      $("#update_rating_notify").addClass("d-none");
+    }, 3000);
+    $("#update_rating_text").removeClass("d-none");
+    $("#update_rating_text_spin").addClass("d-none");
+    }
+  });
+});
+
+$('#update-treatment').click(function () {
+  const updatedSections = [];
+  $('#contentSections_treatment textarea').each(function () {
+    updatedSections.push($(this).val().trim());
+  });
+
+  const updatedContent = updatedSections.join('&%'); // Ensure &% is preserved
+  $("#update_treatment_text").addClass("d-none");
+  $("#update_treatment_text_spin").removeClass("d-none");
+  $.ajax({
+    url: '/homepage',
+    method: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify({ treatment: updatedContent }),
+    success: function () {
+      $("#update_treatment_notify")
+      .text("content updated successfully")
+      .removeClass("d-none alert alert-danger")
+      .addClass("alert alert-primary");
+      setTimeout(function () {
+        $("#update_treatment_notify").addClass("d-none");
+      }, 3000);
+      $("#update_treatment_text").removeClass("d-none");
+      $("#update_treatment_text_spin").addClass("d-none"); 
+    },
+    error: function () {
+      $("#update_treatment_notify")
+      .text("something went wrong, please try again")
+      .removeClass("d-none alert alert-primary")
+      .addClass("alert alert-danger");
+    setTimeout(function () {
+      $("#update_treatment_notify").addClass("d-none");
+    }, 3000);
+    $("#update_treatment_text").removeClass("d-none");
+    $("#update_treatment_text_spin").addClass("d-none");
+    }
+  });
+});
+
+
 
 
 });
