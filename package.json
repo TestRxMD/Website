@@ -3,6 +3,16 @@
   "version": "2.0.0",
   "description": "TestRxMD Website",
   "main": "src/index.js",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "start:dev": "nodemon src/index.js",
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:migrate:undo": "npx sequelize-cli db:migrate:undo"
+  },
   "dependencies": {
     "authorizenet": "^1.0.8",
     "axios": "^1.4.0",
@@ -37,39 +47,32 @@
     "sharp": "^0.31.2",
     "speakeasy": "^2.0.0"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js",
-    "start:dev": "nodemon src/index.js",
-    "db:migrate": "npx sequelize-cli db:migrate",
-    "db:migrate:undo": "npx sequelize-cli db:migrate:undo"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/testrxmd/website.git"
   },
-"keywords": [
-  "testrxmd",
-  "clinic",
-  "testosterone",
-  "hormone",
-  "therapy",
-  "ed",
-  "erectile",
-  "dysfunction",
-  "supplements",
-  "doctor",
-  "medical",
-  "energy",
-  "shop",
-  "medication",
-  "indiana",
-  "columbus",
-  "nieters",
-  "peptides",
-  "peptide therapy",
-  "saddoris"
-],
+  "keywords": [
+    "testrxmd",
+    "clinic",
+    "testosterone",
+    "hormone",
+    "therapy",
+    "ed",
+    "erectile",
+    "dysfunction",
+    "supplements",
+    "doctor",
+    "medical",
+    "energy",
+    "shop",
+    "medication",
+    "indiana",
+    "columbus",
+    "nieters",
+    "peptides",
+    "peptide therapy",
+    "saddoris"
+  ],
   "author": "Jacob Briggs",
   "license": "ISC",
   "bugs": {
