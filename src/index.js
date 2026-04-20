@@ -35,11 +35,14 @@ const Relation = require("./models/relation.model");
 
 process.env.NODE_CONFIG_DIR = path.join(__dirname, "/config");
 
-// Trust Railway / proxy headers so req.secure works correctly behind Railway/Fastly
-app.set("trust proxy", 1);
-
 // Remove Express signature header
 app.disable("x-powered-by");
+
+// HSTS header
+app.use((req, res, next) => {
+  res.setHeader("Strict-Transport-Security", "max-age=31536000");
+  next();
+});
 
 const corsOptions = {
   origin: [
@@ -51,38 +54,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(logger("dev"));
-
-/**
- * Force HTTPS in production when traffic reaches the app over HTTP.
- * Skip localhost/dev environments.
- */
-app.use((req, res, next) => {
-  const host = req.headers.host || "";
-  const isLocalhost =
-    host.includes("localhost") || host.startsWith("127.0.0.1");
-
-  if (
-    process.env.NODE_ENV === "production" &&
-    !isLocalhost &&
-    !req.secure
-  ) {
-    return res.redirect(301, `https://${host}${req.originalUrl}`);
-  }
-
-  next();
-});
-
-/**
- * Add HSTS header for HTTPS responses.
- * Safer version: no includeSubDomains for now.
- */
-app.use((req, res, next) => {
-  if (req.secure) {
-    res.setHeader("Strict-Transport-Security", "max-age=31536000");
-  }
-  next();
-});
-
 app.use(passport.initialize());
 googlePassport(passport);
 
@@ -91,15 +62,14 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use("/node", express.static(path.join(__dirname, "../node_modules")));
 
 // Middleware
-// app.use(express.json());
 app.use((req, res, next) => {
   console.log(req.originalUrl);
 
   if (req.originalUrl === "/paymentwebhook") {
-    next();
-  } else {
-    express.json()(req, res, next);
+    return next();
   }
+
+  return express.json()(req, res, next);
 });
 
 app.use(express.urlencoded({ extended: true }));
@@ -142,7 +112,7 @@ app.use((err, req, res, next) => {
 
 sequelize
   .sync()
-  .then(async () => {
+  .then(() => {
     app.listen(port, () => {
       const Role = require("./models/roleModel");
 
@@ -160,8 +130,6 @@ sequelize
             role: "user",
           });
         }
-
-        return;
       };
 
       populateDB();
